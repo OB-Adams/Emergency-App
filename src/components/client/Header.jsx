@@ -9,9 +9,6 @@ export default function Header() {
           <a href="/signup" className="hover:underline">Sign Up</a>
           <a href="/login" className="hover:underline">Login</a>
           <a href="/homepage" className="hover:underline">Home</a>
-          <Button
-          className={"w-2 h-6.5 bg-red-600"}
-          />
         </nav>
       </header>
     );
