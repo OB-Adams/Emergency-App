@@ -48,67 +48,75 @@ export default function Header() {
           </span>
         </Link>
       </div>
-      <nav className="flex text-red-600 gap-2 sm:gap-4">
-        <Link href="/">
+      <nav className="flex gap-2 border-2 border-red-400 rounded-xl p-1">
+        <Link href="/" className="flex-1">
           <Button
-            variant={activeButton === 'home' ? 'default' : 'ghost'}
+            variant="ghost"
             onClick={() => handleButtonClick('home')}
-            className={`flex flex-col w-auto h-10 sm:h-12 md:h-14 ${
-              activeButton === 'home' ? 'bg-red-500 text-white hover:bg-red-600' : 'hover:bg-red-100'
+            className={`w-full flex items-center justify-center rounded-lg px-4 py-2 tracking-widest ${
+              activeButton === 'home'
+                ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
+                : 'text-gray-700 hover:bg-red-100'
             }`}
           >
             <img
               src="/icons/home.svg"
               alt="Home"
-              className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1"
+              className={`w-5 h-5 mr-2 ${activeButton === 'home' ? 'brightness-0 invert' : ''}`}
             />
             Home
           </Button>
         </Link>
-        <Link href="/homepage">
+        <Link href="/homepage" className="flex-1">
           <Button
-            variant={activeButton === 'sos' ? 'default' : 'ghost'}
+            variant="ghost"
             onClick={() => handleButtonClick('sos')}
-            className={`flex flex-col w-auto h-10 sm:h-12 md:h-14 ${
-              activeButton === 'sos' ? 'bg-red-500 text-white hover:bg-red-600' : 'hover:bg-red-100'
+            className={`w-full flex items-center justify-center rounded-lg px-4 py-2 tracking-widest ${
+              activeButton === 'sos'
+                ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
+                : 'text-gray-700 hover:bg-red-100'
             }`}
           >
             <img
               src="/icons/sos.svg"
               alt="SOS"
-              className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1"
+              className={`w-5 h-5 mr-2 ${activeButton === 'sos' ? 'brightness-0 invert' : ''}`}
             />
             SOS
           </Button>
         </Link>
-        <Link href="/about">
+        <Link href="/about" className="flex-1">
           <Button
-            variant={activeButton === 'about' ? 'default' : 'ghost'}
+            variant="ghost"
             onClick={() => handleButtonClick('about')}
-            className={`flex flex-col w-auto h-10 sm:h-12 md:h-14 ${
-              activeButton === 'about' ? 'bg-red-500 text-white hover:bg-red-600' : 'hover:bg-red-100'
+            className={`w-full flex items-center justify-center rounded-lg px-4 py-2 tracking-widest ${
+              activeButton === 'about'
+                ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
+                : 'text-gray-700 hover:bg-red-100'
             }`}
           >
             <img
               src="/icons/about.svg"
               alt="About"
-              className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1"
+              className={`w-5 h-5 mr-2 ${activeButton === 'about' ? 'brightness-0 invert' : ''}`}
             />
             About
           </Button>
         </Link>
-        <Link href="/profile">
+        <Link href="/profile" className="flex-1">
           <Button
-            variant={activeButton === 'profile' ? 'default' : 'ghost'}
+            variant="ghost"
             onClick={() => handleButtonClick('profile')}
-            className={`flex flex-col w-auto h-10 sm:h-12 md:h-14 ${
-              activeButton === 'profile' ? 'bg-red-500 text-white hover:bg-red-600' : 'hover:bg-red-100'
+            className={`w-full flex items-center justify-center rounded-lg px-4 py-2 tracking-widest ${
+              activeButton === 'profile'
+                ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
+                : 'text-gray-700 hover:bg-red-100'
             }`}
           >
             <img
               src="/icons/profile.svg"
               alt="Profile"
-              className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1"
+              className={`w-5 h-5 mr-2 ${activeButton === 'profile' ? 'brightness-0 invert' : ''}`}
             />
             Profile
           </Button>
