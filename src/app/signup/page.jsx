@@ -8,6 +8,7 @@ export default function SignUp() {
     email: '',
     mobilePhone: '',
     password: '',
+    confirmPassword: '',
   });
 
   const handleChange = (e) => {
@@ -74,6 +75,17 @@ export default function SignUp() {
             onChange={handleChange}
             className="w-full p-2 border rounded-full mt-1"
             placeholder="Enter password"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700">Confirm Password</label>
+          <input
+            type="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-full mt-1"
+            placeholder="Confirm password"
           />
         </div>
         <button

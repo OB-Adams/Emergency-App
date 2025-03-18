@@ -40,7 +40,7 @@ export default function EmergencyTypeSelector({ value, onChange }) {
                   />
                 )}
                 {isSelected && (
-                  <div className="absolute top-0 left-9 transform translate-x-1/2 -translate-y-1/2">
+                  <div className="absolute top-0 left-8 transform translate-x-1/2 -translate-y-1/2">
                     <svg
                       className="text-white bg-green-600 rounded-full p-1"
                       width="23"
