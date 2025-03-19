@@ -1,5 +1,5 @@
 import Header from "../components/client/Header";
-import SOSpage from "@/components/client/SOSpage";
+import SOSpage from "../components/client/SOSpage";
 
 export default function Home() {
   return (

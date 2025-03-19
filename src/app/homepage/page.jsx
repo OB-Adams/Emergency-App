@@ -1,10 +1,10 @@
 'use client';
 
-import EmergencyType from "@/components/client/EmergencyType";
+import EmergencyType from "../../components/client/EmergencyType";
 import Header from "../../components/client/Header";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import EmergencyDesc from "@/components/client/EmergencyDesc";
+import { Button } from "../../components/ui/button";
+import EmergencyDesc from "../../components/client/EmergencyDesc";
 import { toast } from "sonner";
 
 export default function Homepage() {
