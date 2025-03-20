@@ -1,4 +1,4 @@
-import Header from "@/components/client/Header";
+import Header from "../../components/client/Header";
 
 export default function Profile() {
   return (

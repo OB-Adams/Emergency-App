@@ -17,13 +17,14 @@ export async function signup(state, formData) {
   }
 
   const { fullName, email, mobilePhone, password } = validatedFields.data;
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   // Mock API call (since backend isn't set up)
   try {
     const response = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fullName, email, mobilePhone, password }),
+      body: JSON.stringify({ fullName, email, mobilePhone, hashedPassword }),
     });
     const data = await response.json();
     if (!data.success) {
