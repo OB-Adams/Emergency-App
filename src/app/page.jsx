@@ -5,8 +5,7 @@ export default function Home() {
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       <Header/>
-      <br />
-      <main className="bg-amber-50 min-h-screen w-full items-center rounded-2xl border">
+      <main className="bg-white items-center min-h-screen rounded-2xl border border-gray-200 mx-3.5">
         <SOSpage/>
       </main>
     </div>

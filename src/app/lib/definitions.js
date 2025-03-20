@@ -31,3 +31,8 @@ export const SignupFormSchema = z
       })
       .trim(),
   });
+
+export const LoginSchema = z.object({
+  email: z.string().email({ message: 'Please enter a valid email.' }).trim(),
+  password: z.string().min(1, { message: 'Password is required.' }),
+});

@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import SessionWrapper from "../components/client/SessionWrapper"
 import "./styles/globals.css";
 
 const geistSans = Geist({
@@ -39,7 +40,9 @@ export default function RootLayout({ children }) {
           offset="20px" // Distance from the top
           mobileOffset="10px" // Adjusted offset for mobile
         />
+        <SessionWrapper>
         {children}
+        </SessionWrapper>
       </body>
     </html>
   );

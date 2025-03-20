@@ -1,8 +1,9 @@
+// src/app/signup/page.jsx
 'use client';
 
-import { useActionState, useState } from 'react';
-import { signup } from '../actions/auth';
-import { toast } from 'sonner';
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -11,36 +12,63 @@ export default function SignUp() {
     mobilePhone: '',
     password: '',
   });
-  const [confirmPasswordError, setConfirmPasswordError] = useState(''); // Local state for confirmPassword error
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [error, setError] = useState(null);
 
-  const [state, action, pending] = useActionState(signup, undefined);
-  console.log('Validation errors:', state?.errors);
+  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Validate confirmPassword in real-time
-    if (name === 'password' || name === 'confirmPassword') {
-      const newFormData = { ...formData, [name]: value };
-      if (newFormData.password && newFormData.confirmPassword) {
+    if (name === 'confirmPassword') {
+      setConfirmPassword(value);
+      if (formData.password && value) {
         setConfirmPasswordError(
-          newFormData.password !== newFormData.confirmPassword
-            ? 'Passwords do not match.'
-            : ''
+          formData.password !== value ? 'Passwords do not match.' : ''
         );
       } else {
         setConfirmPasswordError('');
       }
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      if (name === 'password' && confirmPassword) {
+        setConfirmPasswordError(
+          value !== confirmPassword ? 'Passwords do not match.' : ''
+        );
+      }
     }
   };
 
-  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (confirmPasswordError) return;
+
+    try {
+      const res = await signIn('credentials', {
+        redirect: false,
+        action: 'signup',
+        fullName: formData.fullName,
+        email: formData.email,
+        mobilePhone: formData.mobilePhone,
+        password: formData.password,
+      });
+
+      if (res?.error) {
+        const parsedError = JSON.parse(res.error);
+        setError(parsedError);
+      } else {
+        router.push('/login'); // Redirect to dashboard or home page after successful sign-up
+      }
+    } catch (err) {
+      setError({ general: 'An unexpected error occurred.' });
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
       <h1 className="text-3xl font-bold text-red-600 mb-4">Let’s sign you up.</h1>
       <p className="text-gray-600 mb-6">Welcome.</p>
-      <form action={action} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-gray-700">Full Name</label>
           <input
@@ -51,8 +79,8 @@ export default function SignUp() {
             className="w-full p-2 border rounded-full mt-1"
             placeholder="Your name"
           />
-          {state?.errors?.fullName && (
-            <p className="text-red-600 text-sm">{state.errors.fullName}</p>
+          {error?.fullName && (
+            <p className="text-red-600 text-sm">{error.fullName}</p>
           )}
         </div>
         <div>
@@ -65,8 +93,8 @@ export default function SignUp() {
             className="w-full p-2 border rounded-full mt-1"
             placeholder="Your email"
           />
-          {state?.errors?.email && (
-            <p className="text-red-600 text-sm">{state.errors.email}</p>
+          {error?.email && (
+            <p className="text-red-600 text-sm">{error.email}</p>
           )}
         </div>
         <div>
@@ -82,8 +110,8 @@ export default function SignUp() {
             inputMode="numeric"
             maxLength={10}
           />
-          {state?.errors?.mobilePhone && (
-            <p className="text-red-600 text-sm">{state.errors.mobilePhone}</p>
+          {error?.mobilePhone && (
+            <p className="text-red-600 text-sm">{error.mobilePhone}</p>
           )}
         </div>
         <div>
@@ -96,16 +124,16 @@ export default function SignUp() {
             className="w-full p-2 border rounded-full mt-1"
             placeholder="Enter password"
           />
-          {state?.errors?.password && (
+          {error?.password && (
             <div className="text-red-600 text-sm">
               <p>Password must:</p>
               <ul>
-                {Array.isArray(state.errors.password) ? (
-                  state.errors.password.map((error) => (
-                    <li key={error}>- {error}</li>
+                {Array.isArray(error.password) ? (
+                  error.password.map((err) => (
+                    <li key={err}>- {err}</li>
                   ))
                 ) : (
-                  <li>- {state.errors.password}</li>
+                  <li>- {error.password}</li>
                 )}
               </ul>
             </div>
@@ -116,7 +144,7 @@ export default function SignUp() {
           <input
             type="password"
             name="confirmPassword"
-            value={formData.confirmPassword}
+            value={confirmPassword}
             onChange={handleChange}
             className="w-full p-2 border rounded-full mt-1"
             placeholder="Confirm password"
@@ -127,7 +155,7 @@ export default function SignUp() {
         </div>
         <button
           type="submit"
-          disabled={pending || confirmPasswordError !== ''} // Disable if there's a confirmPassword error
+          disabled={confirmPasswordError !== ''}
           className="w-full bg-red-600 text-white p-2 rounded-full hover:bg-red-700 mt-4 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Sign up
@@ -135,8 +163,8 @@ export default function SignUp() {
         <p className="text-center text-red-600 mt-2">
           Already a member? <a href="/login" className="underline">Log in</a>
         </p>
-        {state?.errors?.general && (
-          <p className="text-red-600 text-sm text-center">{state.errors.general}</p>
+        {error?.general && (
+          <p className="text-red-600 text-sm text-center">{error.general}</p>
         )}
       </form>
     </div>

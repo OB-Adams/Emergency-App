@@ -1,15 +1,36 @@
+// src/app/homepage/page.jsx
 'use client';
 
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import EmergencyType from "../../components/client/EmergencyType";
 import Header from "../../components/client/Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 import EmergencyDesc from "../../components/client/EmergencyDesc";
 import { toast } from "sonner";
 
 export default function Homepage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // Handle loading state
+  if (status === 'loading') {
+    return <p>Loading...</p>;
+  }
+
+  useEffect(() => {
+    // Redirect to login if unauthenticated
+    if (status === 'unauthenticated') {
+      router.push('/login');
+      return null;
+    }
+  },[status, router])
+
+
+  // State and logic (unchanged from your original code)
   const [emergencyType, setEmergencyType] = useState('');
-  const [description, setDescription] = useState(''); // Added missing state
+  const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
 
   const handleSubmit = async (e) => {
@@ -60,6 +81,7 @@ export default function Homepage() {
     });
   };
 
+  // JSX (unchanged from your original code)
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       <Header />
