@@ -1,28 +1,41 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+  const [error, setError] = useState(null);
+
+  const router = useRouter();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Mock API call (replace with real endpoint later)
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
-    const data = await response.json();
-    if (data.success) alert('Login successful! Redirecting to Home...');
-    else alert('Login failed. Check your credentials.');
+    try {
+      const res = await signIn('credentials', {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (res?.error) {
+        const parsedError = JSON.parse(res.error);
+        setError(parsedError);
+      } else {
+        router.push('/homepage');
+      }
+    } catch (err) {
+      setError({ general: 'An unexpected error occurred.' });
+    }
   };
 
   return (
@@ -40,6 +53,9 @@ export default function Login() {
             className="w-full p-2 border rounded-full mt-1"
             placeholder="Your email"
           />
+          {error?.email && (
+            <p className="text-red-600 text-sm">{error.email}</p>
+          )}
         </div>
         <div>
           <label className="block text-gray-700">Password</label>
@@ -51,6 +67,9 @@ export default function Login() {
             className="w-full p-2 border rounded-full mt-1"
             placeholder="Enter password"
           />
+          {error?.password && (
+            <p className="text-red-600 text-sm">{error.password}</p>
+          )}
         </div>
         <button
           type="submit"
@@ -61,6 +80,9 @@ export default function Login() {
         <p className="text-center text-red-600 mt-2">
           Don’t have an account? <a href="/signup" className="underline">Sign up</a>
         </p>
+        {error?.general && (
+          <p className="text-red-600 text-sm text-center">{error.general}</p>
+        )}
       </form>
     </div>
   );

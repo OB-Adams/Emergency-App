@@ -7,7 +7,7 @@ import { Button } from '../ui/button';
 
 export default function SOSpage() {
   return (
-    <div className="flex flex-col items-center min-h-screen bg-amber-50 p-4">
+    <div className="flex flex-col items-center min-h-screen p-4">
       <h5 className="text-lg font-semibold text-center sm:text-xl ">
         Help is just a click away!
       </h5>
