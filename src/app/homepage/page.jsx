@@ -19,13 +19,11 @@ export default function Homepage() {
     return <p>Loading...</p>;
   }
 
-  useEffect(() => {
-    // Redirect to login if unauthenticated
-    if (status === 'unauthenticated') {
-      router.push('/login');
-      return null;
-    }
-  },[status, router])
+  // Protect the route: redirect to login if unauthenticated
+  if (status === 'unauthenticated') {
+    router.push('/login');
+    return null;
+  }
 
 
   // State and logic (unchanged from your original code)
