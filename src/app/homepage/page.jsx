@@ -25,7 +25,7 @@ export default function Homepage() {
     return null;
   }
 
-  // State and logic (unchanged from your original code)
+  // State and logic
   const [emergencyType, setEmergencyType] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
@@ -40,6 +40,7 @@ export default function Homepage() {
       });
       return;
     }
+    console.log({ emergencyType, description, location });
     try {
       const response = await fetch('/api/requests', {
         method: 'POST',
@@ -78,11 +79,13 @@ export default function Homepage() {
     });
   };
 
-  // JSX (unchanged from your original code)
+  // JSX
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       <Header />
-      <p className="text-red-600 text-center font-bold text-sm sm:text-base md:text-xl">Welcome, {session.user.name || 'Guest'}!</p>
+      <p className="text-red-600 text-center font-bold text-sm sm:text-base md:text-xl">
+        Welcome, {session.user.name || 'Guest'}!
+      </p>
       <main className="bg-white p-4 flex min-h-screen gap-14 rounded-2xl border border-gray-200 m-3.5">
         <div className="flex-1/2 m-2">
           <EmergencyType
@@ -104,10 +107,10 @@ export default function Homepage() {
           )}
           <EmergencyDesc
             value={description}
-            onChange={(newDesc) => setDescription(newDesc)}
+            onChange={(e) => setDescription(e.target.value)} // Handle event object
           />
         </div>
-        
+
         <div className="flex-1/2">
           <div>
             <h2 className="text-lg font-bold">Location</h2>
@@ -123,7 +126,7 @@ export default function Homepage() {
                 value={location}
                 placeholder="Eg. Independence Square"
                 className="border-2 border-red-600 rounded-lg w-96 p-2 mr-2.5 focus:outline-none focus:ring-2 focus:ring-red-500"
-                onChange={(e) => {setLocation(e.target.value)}}
+                onChange={(e) => setLocation(e.target.value)}
               />
               <Button
                 variant="outline"
