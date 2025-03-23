@@ -25,7 +25,6 @@ export default function Homepage() {
     return null;
   }
 
-
   // State and logic (unchanged from your original code)
   const [emergencyType, setEmergencyType] = useState('');
   const [description, setDescription] = useState('');
@@ -83,6 +82,7 @@ export default function Homepage() {
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       <Header />
+      <p className="text-red-600 text-center font-bold text-sm sm:text-base md:text-xl">Welcome, {session.user.name || 'Guest'}!</p>
       <main className="bg-white p-4 flex min-h-screen gap-14 rounded-2xl border border-gray-200 m-3.5">
         <div className="flex-1/2 m-2">
           <EmergencyType
