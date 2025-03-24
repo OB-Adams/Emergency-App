@@ -1,27 +1,37 @@
-const mongoose = require('mongoose');
+const { MongoClient } = require("mongodb");
+require("dotenv").config();
 
-const uri = "mongodb+srv://obobadams:kRLl42M3BzSIXlvl@cluster0.mtf9a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const mongo_url = process.env.MONGO_URI;
+const dbName = process.env.DB_NAME || "auth_db"; // Default fallback DB name
 
-let isConnected = false;
+if (!mongo_url) {
+  throw new Error("❌ Missing MONGO_URI in .env file");
+}
+
+let client;
+let db;
+let usersCollection;
 
 const connectDB = async () => {
-    if (isConnected) {
-        console.log("Using existing MongoDB connection ✅");
-        return;
+  try {
+    if (!client) {
+      client = new MongoClient(mongo_url, {
+        serverSelectionTimeoutMS: 50000, // Ensures MongoDB server is found within 50s
+        socketTimeoutMS: 50000, // Prevents socket hangups
+      });
+
+      await client.connect();
+      console.log(`✅ Connected to MongoDB Atlas: ${dbName}`);
+
+      db = client.db(dbName);
+      usersCollection = db.collection("users"); // Assigning a collection for usage
     }
 
-    try {
-        const db = await mongoose.connect(uri, {
-            useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 5000,
-        });
-
-        isConnected = db.connections[0].readyState === 1;
-        console.log("Connected to MongoDB Atlas ✅");
-    } catch (error) {
-        console.error("MongoDB connection error ❌:", error);
-        throw new Error("Database connection failed");
-    }
+    return { db, usersCollection };
+  } catch (error) {
+    console.error("❌ MongoDB connection failed:", error);
+    throw new Error("Database connection failed");
+  }
 };
 
-module.exports = connectDB;
+module.exports = { connectDB, usersCollection };

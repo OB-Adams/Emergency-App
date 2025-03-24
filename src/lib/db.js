@@ -1,18 +1,35 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require("mongodb");
+require("dotenv").config();
 
-const uri = "mongodb+srv://obobadams:kRLl42M3BzSIXlvl@cluster0.mtf9a.mongodb.net/exercise-tracker?retryWrites=true&w=majority&appName=Cluster0";
+const uri = process.env.MONGO_URI;
+if (!uri) {
+  throw new Error("Missing MONGO_URI in .env file");
+}
 
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const dbName = process.env.DB_NAME || "auth_db";
+
+let client;
+let clientPromise;
 
 async function connectDB() {
-    try {
-        await client.connect();
-        console.log("Connected to MongoDB Atlas");
-        return client.db("<dbname>");
-    } catch (error) {
-        console.error("Connection failed", error);
+  if (!clientPromise) {
+    client = new MongoClient(uri, {
+      serverSelectionTimeoutMS: 5000,
+    });
+
+    clientPromise = client
+      .connect()
+      .then(() => {
+        console.log(`✅ Connected to MongoDB Atlas: ${dbName}`);
+        return client.db(dbName);
+      })
+      .catch((error) => {
+        console.error("❌ MongoDB connection failed:", error);
         process.exit(1);
-    }
+      });
+  }
+
+  return clientPromise;
 }
 
 module.exports = connectDB;
