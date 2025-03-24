@@ -5,6 +5,13 @@ import { useRouter } from 'next/navigation';
 import Header from '../../components/client/Header';
 import { Button } from '../../components/ui/button';
 import { toast } from 'sonner';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../../components/ui/accordion";
+
 
 export default function Profile() {
   const { data: session, status } = useSession();
@@ -47,31 +54,46 @@ export default function Profile() {
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       <Header />
-      <main className="bg-white p-4 min-h-screen rounded-2xl border border-gray-200 m-3.5">
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
-          <h1 className="text-3xl font-bold text-red-600 mb-4">Your Profile</h1>
-          <p className="text-gray-600 mb-6">Welcome, {session.user.name || 'User'}!</p>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-gray-700 font-bold">Full Name</label>
-              <p className="text-gray-900 p-2 border rounded-lg">
+      <main className="bg-white p-4 min-h-screen rounded-2xl border border-gray-200 m-3.5 px-4">
+      <h1 className="text-3xl font-bold text-red-600 mb-4 ml-4">Your Profile</h1>
+      <p className="text-gray-700 mb-6 ml-4 text-lg">Welcome, {session.user.name || 'User'}!</p>
+      <Accordion type="single" collapsible className="w-full px-4">
+      <AccordionItem value="item-1">
+        <AccordionTrigger className={"text-xl"}>Account Details</AccordionTrigger>
+        <AccordionContent>
+          <div>
+              <label className="block text-gray-700 font-bold mb-0.5">Full Name</label>
+              <p className="text-gray-900 p-2 border rounded-lg mb-0.5">
                 {session.user.name || 'Not provided'}
               </p>
             </div>
             <div>
-              <label className="block text-gray-700 font-bold">Email</label>
-              <p className="text-gray-900 p-2 border rounded-lg">
+              <label className="block text-gray-700 font-bold mb-0.5">Email</label>
+              <p className="text-gray-900 p-2 border rounded-lg mb-0.5">
                 {session.user.email || 'Not provided'}
               </p>
             </div>
-            <Button
-              onClick={handleSignOut}
-              className="w-full bg-red-600 text-white p-2 rounded-full hover:bg-red-700 mt-6"
-            >
-              Sign Out
-            </Button>
-          </div>
-        </div>
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2">
+        <AccordionTrigger className={"text-xl"}>Settings</AccordionTrigger>
+        <AccordionContent>
+          We will implement "theming" here
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-3">
+        <AccordionTrigger className={"text-xl"}>About</AccordionTrigger>
+        <AccordionContent>
+          <a href="/about">Read more about this emergency application</a>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+        <Button
+          onClick={handleSignOut}
+          className="w-full h-12 bg-red-600 text-white text-xl p-2 rounded-full hover:bg-red-700 mt-6"
+        >
+          Sign Out
+        </Button>
       </main>
     </div>
   );
