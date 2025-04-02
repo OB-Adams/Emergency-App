@@ -49,7 +49,7 @@ export default function SOSpage() {
         </Button>
         </Link>
 
-        <Link href={"/responder_dashboard"}>
+        <Link href={"/adminLogin"}>
         <Button className="text-white bg-black w-32 h-12" >Admin</Button>
         </Link>
         
