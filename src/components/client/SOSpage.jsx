@@ -38,15 +38,19 @@ export default function SOSpage() {
         >
           Sign Up
         </Button>
+
         </Link>
         <Link href={"/login"}>
         <Button
           variant="outline"
           className="w-32 h-12 border-red-600 text-red-600 hover:bg-red-100"
-          
         >
           Login
         </Button>
+        </Link>
+
+        <Link href={"/adminLogin"}>
+        <Button className="text-white bg-black w-32 h-12" >Admin</Button>
         </Link>
         
       </div>
