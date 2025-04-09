@@ -3,13 +3,14 @@
 //import Header from "../../components/client/Header";
 import React from "react";
 import { AppSidebar } from "../../components/app-sidebar";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "../../components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger, Button } from "../../components/ui/sidebar";
 import { Separator } from "../../components/ui/separator";
+import {Modal} from "../../components/ui/modal";
 
 
 export default function ResponderDashboard() {
-    const handleClick= ()=>{
-        <toast className="show">Request approved!</toast>
+    const handleClick = () => {
+        toast.success("Request Approved")
     }
    
     return(
@@ -26,6 +27,7 @@ export default function ResponderDashboard() {
                     <div className="aspect-video rounded-xl bg-muted/50" />
                     <div className="aspect-video rounded-xl bg-muted/50" />
                 </div>
+              <Modal/>
                 <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
                 </div>
             </SidebarInset>

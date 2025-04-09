@@ -2,6 +2,8 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter for navigation
+import ResponderDashboard from "../responder_dashboard/page";
+
 
 export default function AdminLogin() {
   // Define state for form data and error
@@ -29,7 +31,7 @@ export default function AdminLogin() {
         const parsedError = JSON.parse(res.error);
         setError(parsedError);
       } else {
-        router.push("/homepage"); // Redirect on successful login
+        router.push("/responder_dashboard"); 
       }
     } catch (err) {
       setError({ general: "An unexpected error occurred." });
@@ -44,8 +46,8 @@ export default function AdminLogin() {
         <div className="mb-4">
           <label className="block text-gray-700">Username</label>
           <input
-            type="email" // Use email type for validation
-            name="username" // Use lowercase for consistency
+            type="email"
+            name="username" 
             value={formData.username}
             onChange={handleChange}
             className="w-full p-2 border rounded-full mt-1"
@@ -56,7 +58,7 @@ export default function AdminLogin() {
           )}
         </div>
 
-        {/* Password Field */}
+        {/* Password  */}
         <div className="mb-4">
           <label className="block text-gray-700">Password</label>
           <input
