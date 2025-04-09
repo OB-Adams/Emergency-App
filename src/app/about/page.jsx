@@ -11,10 +11,19 @@ export default function About() {
         <h1>About Page</h1>
 
         <p>About the team</p>
-        <div className= "flex space-x-4">
-        <Image src="/images/pic.png" width={200} height={200}/>
-        <Image src="/images/pic.png" width={200} height={200}/>
-        <Image src="/images/pic.png" width={200} height={200}/>
+        <div className= "flex flex-col space-x-4 items-center gap-2">
+          <div className="flex">
+          <Image src="/images/pic.png" width={200} height={200} alt="Team member image"/>
+          <Image src="/images/pic.png" width={200} height={200} alt="Team member image"/>
+          <Image src="/images/pic.png" width={200} height={200} alt="Team member image"/>
+          <Image src="/images/pic.png" width={200} height={200} alt="Team member image"/>
+          </div>
+          <div className="flex">
+          <Image src="/images/pic.png" width={200} height={200} alt="Team member image"/>
+          <Image src="/images/pic.png" width={200} height={200} alt="Team member image"/>
+          <Image src="/images/pic.png" width={200} height={200} alt="Team member image"/>
+          <Image src="/images/pic.png" width={200} height={200} alt="Team member image"/>
+          </div>
         </div>
      
 
