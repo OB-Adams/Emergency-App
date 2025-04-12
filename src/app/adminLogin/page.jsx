@@ -2,8 +2,6 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter for navigation
-import ResponderDashboard from "../responder_dashboard/page";
-
 
 export default function AdminLogin() {
   // Define state for form data and error
@@ -31,7 +29,7 @@ export default function AdminLogin() {
         const parsedError = JSON.parse(res.error);
         setError(parsedError);
       } else {
-        router.push("/responder_dashboard"); 
+        router.push("/Dashboard"); 
       }
     } catch (err) {
       setError({ general: "An unexpected error occurred." });
