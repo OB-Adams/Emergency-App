@@ -1,6 +1,5 @@
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogFooter,
@@ -17,9 +16,10 @@ import { useState } from "react"
     return (
       <AlertDialog >
         <AlertDialogTrigger asChild>
-          <Button variant="outline">Approve Request</Button>
+          <Button variant="outline" className="bg-green-400">Approve Request</Button>
         </AlertDialogTrigger>
-        <AlertDialogContent>
+        <AlertDialogContent className= "bg-gray-300">
+          <img src ="/icons/Bell.png" className="mx-auto mb-2 h-8 w-8"/>
           <AlertDialogHeader>
             <AlertDialogTitle>Request approved</AlertDialogTitle>
               </AlertDialogHeader>
