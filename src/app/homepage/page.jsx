@@ -5,14 +5,17 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import EmergencyType from "../../components/client/EmergencyType";
 import Header from "../../components/client/Header";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "../../components/ui/button";
 import EmergencyDesc from "../../components/client/EmergencyDesc";
 import { toast } from "sonner";
+import MapboxAutocomplete from "../../components/client/MapboxAutocomplete";
+import MapboxMap from "../../components/client/MapboxMap";
 
 export default function Homepage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const modalRef = useRef(null); // Ref to handle click-outside-to-close
 
   // Handle loading state
   if (status === 'loading') {
@@ -28,7 +31,64 @@ export default function Homepage() {
   // State and logic
   const [emergencyType, setEmergencyType] = useState('');
   const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState(''); // Human-readable address
+  const [coordinates, setCoordinates] = useState(null); // { lng, lat }
+  const [isMapOpen, setIsMapOpen] = useState(false);
+
+  // Reverse geocode coordinates to get a human-readable address
+  const reverseGeocode = async (lng, lat) => {
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
+      );
+      const data = await response.json();
+      if (data.features && data.features.length > 0) {
+        return data.features[0].place_name;
+      }
+      return 'Unknown location';
+    } catch (error) {
+      console.error('Error reverse geocoding:', error);
+      return 'Error retrieving address';
+    }
+  };
+
+  // Handle location change from autocomplete
+  const handleLocationChange = async (address, coords = null) => {
+    if (coords) {
+      // If coordinates are provided (from autocomplete suggestion)
+      setCoordinates(coords);
+      setLocation(address);
+    } else {
+      // If only address is provided (manual typing), keep coordinates null
+      setLocation(address);
+      setCoordinates(null);
+    }
+  };
+
+  // Handle location selection from map
+  const handleLocationSelect = async ({ lng, lat }) => {
+    const address = await reverseGeocode(lng, lat);
+    setCoordinates({ lng, lat });
+    setLocation(address);
+    setIsMapOpen(false); // Close the modal
+  };
+
+  // Handle click outside to close the modal
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsMapOpen(false);
+      }
+    };
+
+    if (isMapOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMapOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,12 +100,12 @@ export default function Homepage() {
       });
       return;
     }
-    console.log({ emergencyType, description, location });
+    console.log({ emergencyType, description, location, coordinates });
     try {
       const response = await fetch('/api/requests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emergencyType, description, location }),
+        body: JSON.stringify({ emergencyType, description, location, coordinates }),
       });
       const data = await response.json();
       if (data.success) {
@@ -107,7 +167,7 @@ export default function Homepage() {
           )}
           <EmergencyDesc
             value={description}
-            onChange={(e) => setDescription(e.target.value)} // Handle event object
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
 
@@ -121,22 +181,42 @@ export default function Homepage() {
                 alt="map pin"
                 className="w-6 h-6 mr-2.5"
               />
-              <input
-                type="text"
+              <MapboxAutocomplete
                 value={location}
-                placeholder="Eg. Independence Square"
-                className="border-2 border-red-600 rounded-lg w-96 p-2 mr-2.5 focus:outline-none focus:ring-2 focus:ring-red-500"
-                onChange={(e) => setLocation(e.target.value)}
+                onChange={handleLocationChange}
               />
               <Button
                 variant="outline"
-                className="text-red-600 border-red-600 hover:bg-red-100"
-                onClick={() => toast('Open map modal or Google Maps here')}
+                className="text-red-600 border-red-600 hover:bg-red-100 ml-2.5"
+                onClick={() => setIsMapOpen(true)}
               >
                 Change
               </Button>
             </div>
           </div>
+
+          {/* Custom Modal */}
+          {isMapOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div
+                ref={modalRef}
+                className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full mx-4 border border-red-600"
+              >
+                <h2 className="text-lg font-bold mb-4">Select Location</h2>
+                <MapboxMap
+                  onLocationSelect={handleLocationSelect}
+                  onClose={() => setIsMapOpen(false)}
+                />
+                <Button
+                  className="mt-4 bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700"
+                  onClick={() => setIsMapOpen(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+
           <div className="mt-6">
             <h2 className="text-lg font-bold mb-2">Attach proof</h2>
             <hr className="mt-2.5 mb-4 border-gray-300" />
