@@ -1,11 +1,8 @@
-// src/app/admin-dashboard/page.jsx
 'use client';
 
 import React, { useState } from "react";
-import { signOut } from "next-auth/react"; // Import signOut from next-auth/react
 import { AppSidebar } from "../../components/app-sidebar";
-import { SidebarProvider, SidebarInset, SidebarTrigger} from "../../components/ui/sidebar";
-import { Button } from "../../components/ui/button";
+import { SidebarProvider, SidebarInset, SidebarTrigger, Button } from "../../components/ui/sidebar";
 import { Separator } from "../../components/ui/separator";
 import { Modal } from "../../components/ui/modal";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
@@ -26,7 +23,7 @@ const HistoryPage = () => {
 
   return (
     <div className="p-4 bg-white rounded-xl shadow">
-      {view === "weekly" && (
+        {view === "weekly" && (
         <div>
           <h2 className="text-xl font-bold mb-2">Weekly Emergency Requests</h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -83,11 +80,6 @@ export default function AdminDashboard() {
     }));
   };
 
-  // Function to handle logout
-  const handleLogout = async () => {
-    await signOut({ redirect: true }); // Sign out and redirect to the login page
-  };
-
   return (
     <SidebarProvider className={"flex"}>
       <AppSidebar className={"flex-1/6"} setActiveTab={setActiveTab} />
@@ -95,13 +87,6 @@ export default function AdminDashboard() {
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
-          {/* Add Logout Button */}
-          <Button
-            onClick={handleLogout}
-            className="ml-auto bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-          >
-            Logout
-          </Button>
         </header>
 
         <div className="flex flex-1 flex-col gap-4 p-4">
@@ -158,11 +143,13 @@ export default function AdminDashboard() {
                   })}
                 </tbody>
               </table>
-              <Modal />
+            <Modal />
+
             </div>
           )}
 
           {activeTab === "weekly" && <HistoryPage />}
+
         </div>
       </SidebarInset>
     </SidebarProvider>
