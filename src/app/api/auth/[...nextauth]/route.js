@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare, hash } from "bcryptjs";
 import { SignupFormSchema, LoginSchema } from "../../../lib/definitions";
-import { connectDB, usersCollection } from "../../../lib/utils/db"; // Updated import
+import { connectDB } from "../../../lib/utils/db"; // Updated import
 
 const handler = NextAuth({
   providers: [
@@ -15,7 +15,7 @@ const handler = NextAuth({
         mobilePhone: { label: "Mobile Phone", type: "tel" },
       },
       async authorize(credentials, req) {
-        const { db, usersCollection } = await connectDB(); // Connect to DB
+        const { db, usersCollection, adminUsersCollection } = await connectDB(); // Connect to DB
         console.log("🔗 Database connected before querying users");
 
         const { email, password, fullName, mobilePhone } = credentials;
@@ -68,7 +68,7 @@ const handler = NextAuth({
           };
         }
 
-        // Handle login
+        // Handle login (admin or regular user)
         console.log("🔍 Processing login request for:", email);
         const validationLogin = LoginSchema.safeParse({ email, password });
 
@@ -80,8 +80,17 @@ const handler = NextAuth({
           throw new Error("Invalid login credentials.");
         }
 
-        const user = await usersCollection.findOne({ email });
-        console.log("🔍 Found user for login:", user);
+        let user;
+
+        // Check if it's an admin login or regular user login
+        if (req.body?.action === "adminLogin") {
+          console.log("🟢 Processing admin login request:", email);
+          user = await adminUsersCollection.findOne({ email }); // Query admin_users collection
+        } else {
+          user = await usersCollection.findOne({ email }); // Query regular users collection
+        }
+
+        console.log("🔍 Found user:", user);
 
         if (!user) {
           console.error("❌ User not found:", email);
@@ -98,17 +107,24 @@ const handler = NextAuth({
           id: user._id.toString(),
           email: user.email,
           name: user.fullName,
+          isAdmin: req.body?.action === "adminLogin", // Add a flag to identify if the user is admin
         };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        token.isAdmin = user.isAdmin; // Store admin flag in JWT
+      }
       return token;
     },
     async session({ session, token }) {
-      if (token) session.user.id = token.id;
+      if (token) {
+        session.user.id = token.id;
+        session.user.isAdmin = token.isAdmin; // Attach the admin flag to session
+      }
       return session;
     },
   },

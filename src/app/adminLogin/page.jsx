@@ -1,13 +1,13 @@
 'use client';
 import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter for navigation
+import { useRouter } from "next/navigation"; 
 
 export default function AdminLogin() {
   // Define state for form data and error
   const [formData, setFormData] = useState({ username: "", password: "" });
-  const [error, setError] = useState(null); // Define error state
-  const router = useRouter(); // Initialize router for navigation
+  const [error, setError] = useState(null);
+  const router = useRouter();
 
   // Handle input changes
   const handleChange = (e) => {
@@ -15,21 +15,22 @@ export default function AdminLogin() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await signIn("credentials", {
         redirect: false,
-        email: formData.username, // Use username as email for signIn
+        email: formData.username,
         password: formData.password,
+        action: "adminLogin", 
       });
 
       if (res?.error) {
         const parsedError = JSON.parse(res.error);
         setError(parsedError);
       } else {
-        router.push("/Dashboard"); 
+        router.push("/admin"); 
       }
     } catch (err) {
       setError({ general: "An unexpected error occurred." });
@@ -45,7 +46,7 @@ export default function AdminLogin() {
           <label className="block text-gray-700">Username</label>
           <input
             type="email"
-            name="username" 
+            name="username"
             value={formData.username}
             onChange={handleChange}
             className="w-full p-2 border rounded-full mt-1"
@@ -56,7 +57,7 @@ export default function AdminLogin() {
           )}
         </div>
 
-        {/* Password  */}
+        {/* Password */}
         <div className="mb-4">
           <label className="block text-gray-700">Password</label>
           <input
@@ -78,7 +79,7 @@ export default function AdminLogin() {
         )}
 
         {/* Submit Button */}
-          <button 
+        <button 
           type="submit"
           className="w-full bg-red-600 text-white p-2 rounded-full hover:bg-blue-600"
         >

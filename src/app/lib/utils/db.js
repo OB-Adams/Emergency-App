@@ -2,7 +2,7 @@ const { MongoClient } = require("mongodb");
 require("dotenv").config();
 
 const mongo_url = process.env.MONGO_URI;
-const dbName = process.env.DB_NAME || "auth_db"; // Default fallback DB name
+const dbName = process.env.DB_NAME || "auth_db";
 
 if (!mongo_url) {
   throw new Error("❌ Missing MONGO_URI in .env file");
@@ -11,27 +11,29 @@ if (!mongo_url) {
 let client;
 let db;
 let usersCollection;
+let adminUsersCollection;
 
 const connectDB = async () => {
   try {
     if (!client) {
       client = new MongoClient(mongo_url, {
-        serverSelectionTimeoutMS: 50000, // Ensures MongoDB server is found within 50s
-        socketTimeoutMS: 50000, // Prevents socket hangups
+        serverSelectionTimeoutMS: 50000, 
+        socketTimeoutMS: 50000,
       });
 
       await client.connect();
       console.log(`✅ Connected to MongoDB Atlas: ${dbName}`);
 
       db = client.db(dbName);
-      usersCollection = db.collection("users"); // Assigning a collection for usage
+      usersCollection = db.collection("users");
+      adminUsersCollection = db.collection("admin_users"); 
     }
 
-    return { db, usersCollection };
+    return { db, usersCollection, adminUsersCollection };
   } catch (error) {
     console.error("❌ MongoDB connection failed:", error);
     throw new Error("Database connection failed");
   }
 };
 
-module.exports = { connectDB, usersCollection };
+module.exports = { connectDB, usersCollection, adminUsersCollection };
