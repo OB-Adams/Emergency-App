@@ -15,27 +15,24 @@ import MapboxMap from "../../components/client/MapboxMap";
 export default function Homepage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const modalRef = useRef(null); // Ref to handle click-outside-to-close
+  const modalRef = useRef(null);
 
-  // Handle loading state
   if (status === 'loading') {
     return <p>Loading...</p>;
   }
 
-  // Protect the route: redirect to login if unauthenticated
   if (status === 'unauthenticated') {
     router.push('/login');
     return null;
   }
 
-  // State and logic
   const [emergencyType, setEmergencyType] = useState('');
   const [description, setDescription] = useState('');
-  const [location, setLocation] = useState(''); // Human-readable address
-  const [coordinates, setCoordinates] = useState(null); // { lng, lat }
+  const [location, setLocation] = useState('');
+  const [coordinates, setCoordinates] = useState(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false); // New state for loading indicator
 
-  // Reverse geocode coordinates to get a human-readable address
   const reverseGeocode = async (lng, lat) => {
     try {
       const response = await fetch(
@@ -52,28 +49,60 @@ export default function Homepage() {
     }
   };
 
-  // Handle location change from autocomplete
   const handleLocationChange = async (address, coords = null) => {
     if (coords) {
-      // If coordinates are provided (from autocomplete suggestion)
       setCoordinates(coords);
       setLocation(address);
     } else {
-      // If only address is provided (manual typing), keep coordinates null
       setLocation(address);
       setCoordinates(null);
     }
   };
 
-  // Handle location selection from map
   const handleLocationSelect = async ({ lng, lat }) => {
     const address = await reverseGeocode(lng, lat);
     setCoordinates({ lng, lat });
     setLocation(address);
-    setIsMapOpen(false); // Close the modal
+    setIsMapOpen(false);
   };
 
-  // Handle click outside to close the modal
+  // New function to handle "Use Current Location"
+  const handleUseCurrentLocation = () => {
+    if (navigator.geolocation) {
+      setIsFetchingLocation(true);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { longitude, latitude } = position.coords;
+          const address = await reverseGeocode(longitude, latitude);
+          setCoordinates({ lng: longitude, lat: latitude });
+          setLocation(address);
+          setIsFetchingLocation(false);
+          toast.success('Location updated to your current position.', {
+            duration: 3000,
+            className: 'bg-green-500 text-white border border-green-700 rounded-xl shadow-md',
+            descriptionClassName: 'text-sm font-medium',
+          });
+        },
+        (error) => {
+          console.error('Error getting user location:', error);
+          setIsFetchingLocation(false);
+          toast.error('Unable to access your location. Please try again or use the map.', {
+            duration: 3000,
+            className: 'bg-red-600 text-white border border-red-800 rounded-xl shadow-md',
+            descriptionClassName: 'text-sm font-medium',
+          });
+        }
+      );
+    } else {
+      console.warn('Geolocation is not supported by this browser.');
+      toast.error('Geolocation not supported by your browser.', {
+        duration: 3000,
+        className: 'bg-red-600 text-white border border-red-800 rounded-xl shadow-md',
+        descriptionClassName: 'text-sm font-medium',
+      });
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -139,7 +168,6 @@ export default function Homepage() {
     });
   };
 
-  // JSX
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       <Header />
@@ -193,9 +221,22 @@ export default function Homepage() {
                 Change
               </Button>
             </div>
+            {/* Add "Use Current Location" text */}
+            <div className="mt-2">
+              {isFetchingLocation ? (
+                <p className="text-gray-600 text-sm">Fetching your location...</p>
+              ) : (
+                <button
+                  onClick={handleUseCurrentLocation}
+                  className="text-red-600 ml-10 text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  aria-label="Use your current location"
+                >
+                  Use Current Location
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* Custom Modal */}
           {isMapOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
               <div

@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import { toast } from 'sonner'; // Add this import
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
@@ -12,14 +13,13 @@ mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 export default function MapboxMap({ onLocationSelect, onClose }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const marker = useRef(null); // Ref to store the marker instance
-  const [lng, setLng] = useState(-0.1278); // Default to London
-  const [lat, setLat] = useState(51.5074);
+  const marker = useRef(null);
+  const [lng, setLng] = useState(-0.1870); // Default to Accra, Ghana
+  const [lat, setLat] = useState(5.6037);
   const [zoom, setZoom] = useState(9);
   const [isMounted, setIsMounted] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState(null); // Track the selected location
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
-  // Get user's current location
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -30,11 +30,24 @@ export default function MapboxMap({ onLocationSelect, onClose }) {
         },
         (error) => {
           console.error('Error getting user location:', error);
-          // Fallback to default location (London) if geolocation fails
+          setLng(-0.1870);
+          setLat(5.6037);
+          toast.error('Unable to access your location. Defaulting to Accra, Ghana.', {
+            duration: 3000,
+            className: 'bg-red-600 text-white border border-red-800 rounded-xl shadow-md',
+            descriptionClassName: 'text-sm font-medium',
+          });
         }
       );
     } else {
       console.warn('Geolocation is not supported by this browser.');
+      setLng(-0.1870);
+      setLat(5.6037);
+      toast.error('Geolocation not supported. Defaulting to Accra, Ghana.', {
+        duration: 3000,
+        className: 'bg-red-600 text-white border border-red-800 rounded-xl shadow-md',
+        descriptionClassName: 'text-sm font-medium',
+      });
     }
   }, []);
 
@@ -45,7 +58,6 @@ export default function MapboxMap({ onLocationSelect, onClose }) {
   useEffect(() => {
     if (!isMounted || !mapContainer.current || map.current) return;
 
-    // Initialize the map
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
@@ -53,10 +65,8 @@ export default function MapboxMap({ onLocationSelect, onClose }) {
       zoom: zoom,
     });
 
-    // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl());
 
-    // Add geocoder (search bar)
     const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
       mapboxgl: mapboxgl,
@@ -65,38 +75,31 @@ export default function MapboxMap({ onLocationSelect, onClose }) {
 
     map.current.addControl(geocoder);
 
-    // Add a marker at the initial location
     marker.current = new mapboxgl.Marker().setLngLat([lng, lat]).addTo(map.current);
 
-    // Handle map click
     map.current.on('click', (e) => {
       const { lng, lat } = e.lngLat;
       marker.current.setLngLat([lng, lat]);
       setLng(lng);
       setLat(lat);
-      setSelectedLocation({ lng, lat }); // Store the selected location
-      // Do not close the modal here; wait for Confirm button
+      setSelectedLocation({ lng, lat });
     });
 
-    // Handle geocoder search result
     geocoder.on('result', (e) => {
       const { center } = e.result;
       const [lng, lat] = center;
       marker.current.setLngLat([lng, lat]);
       setLng(lng);
       setLat(lat);
-      setSelectedLocation({ lng, lat }); // Store the selected location
-      // Do not close the modal here; wait for Confirm button
+      setSelectedLocation({ lng, lat });
     });
 
-    // Update zoom state
     map.current.on('move', () => {
       setLng(map.current.getCenter().lng.toFixed(4));
       setLat(map.current.getCenter().lat.toFixed(4));
       setZoom(map.current.getZoom().toFixed(2));
     });
 
-    // Force resize after map loads
     map.current.on('load', () => {
       map.current.resize();
     });
@@ -105,7 +108,6 @@ export default function MapboxMap({ onLocationSelect, onClose }) {
       console.error('Mapbox error:', e);
     });
 
-    // Cleanup on unmount
     return () => {
       if (map.current) {
         map.current.remove();
@@ -114,11 +116,10 @@ export default function MapboxMap({ onLocationSelect, onClose }) {
     };
   }, [isMounted, lng, lat, zoom]);
 
-  // Handle Confirm button click
   const handleConfirm = () => {
     if (selectedLocation) {
-      onLocationSelect(selectedLocation); // Pass the selected location to the parent
-      onClose(); // Close the modal
+      onLocationSelect(selectedLocation);
+      onClose();
     }
   };
 
@@ -126,7 +127,7 @@ export default function MapboxMap({ onLocationSelect, onClose }) {
     <div>
       <div
         ref={mapContainer}
-        style={{ height: '400px', width: '100%' }} // Removed the red border since the map is rendering
+        style={{ height: '400px', width: '100%' }}
         aria-label="Interactive map for selecting a location"
       />
       {selectedLocation && (
