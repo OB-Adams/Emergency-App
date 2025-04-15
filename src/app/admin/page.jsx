@@ -2,127 +2,76 @@
 
 import React, { useState } from "react";
 import { AppSidebar } from "../../components/app-sidebar";
-import {  SidebarProvider, SidebarInset, SidebarTrigger, Button,} from "../../components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger, Button } from "../../components/ui/sidebar";
 import { Separator } from "../../components/ui/separator";
 import { Modal } from "../../components/ui/modal";
-import {  BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell,} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
-const sampleRequests = [
-  {
-    id: "232020",
-    type: "Fire",
-    fullname: "Cosmos Nyantakyi",
-    contact: "0546777888",
-    time: "8:45am",
-    location: "National Cathedral inside, Accra",
-  },
-  {
-    id: "232021",
-    type: "Accident",
-    fullname: "Nikki Carter",
-    contact: "0244130987",
-    time: "10:10am",
-    location: "Mamprobi, Near Town",
-  },
-  {
-    id: "232022",
-    type: "Theft",
-    fullname: "Maame Yeboah",
-    contact: "0209998888",
-    time: "1:01am",
-    location: "Labadi beach",
-  },
-];
-
-// ✅ HistoryPage Component
+// HistoryPage Component
 const HistoryPage = () => {
-    const [view, setView] = useState("weekly");
-  
-    const weeklyData = [
-      { day: "Mon", requests: 5 },
-      { day: "Tue", requests: 8 },
-      { day: "Wed", requests: 3 },
-      { day: "Thu", requests: 10 },
-      { day: "Fri", requests: 7 },
-      { day: "Sat", requests: 4 },
-      { day: "Sun", requests: 6 },
-    ];
-  
-    const monthlyData = [
-      { name: "Fire", value: 20 },
-      { name: "Accident", value: 15 },
-      { name: "Theft", value: 10 },
-      { name: "Flood", value: 5 },
-    ];
-  
-    const COLORS = ["#FF0000", "#FFA500", "#00C49F", "#0088FE"];
-  
-    return (
-      <div className="p-4 bg-white rounded-xl shadow">
-        <div className="flex gap-4 mb-4">
-          <button
-            onClick={() => setView("weekly")}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Weekly
-          </button>
-          <button
-            onClick={() => setView("monthly")}
-            className="bg-green-500 text-white px-4 py-2 rounded"
-          >
-            Monthly
-          </button>
-        </div>
-  
-        {view === "weekly" && (
-          <div>
-            <h2 className="text-xl font-bold mb-2">Weekly Emergency Requests</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={weeklyData}>
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="requests" fill="#FF0000" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-  
-        {view === "monthly" && (
-          <div>
-            <h2 className="text-xl font-bold mb-2">Monthly Emergency Breakdown</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={monthlyData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label
-                >
-                  {monthlyData.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </div>
-    );
-  };
-    
-     
+  const [view, setView] = useState("weekly");
 
-// ✅ Main Dashboard
+  const weeklyData = [
+    { day: "Mon", requests: 5 },
+    { day: "Tue", requests: 8 },
+    { day: "Wed", requests: 3 },
+    { day: "Thu", requests: 10 },
+    { day: "Fri", requests: 7 },
+    { day: "Sat", requests: 4 },
+    { day: "Sun", requests: 6 },
+  ];
+
+  return (
+    <div className="p-4 bg-white rounded-xl shadow">
+        {view === "weekly" && (
+        <div>
+          <h2 className="text-xl font-bold mb-2">Weekly Emergency Requests</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={weeklyData}>
+              <XAxis dataKey="day" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="requests" fill="#FF0000" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Main Dashboard
 export default function AdminDashboard() {
   const [statuses, setStatuses] = useState({});
-  const [activeTab, setActiveTab] = useState("dashboard"); // NEW: track current view
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  const sampleRequests = [
+    {
+      id: "232020",
+      type: "Fire",
+      fullname: "Cosmos Nyantakyi",
+      contact: "0546777888",
+      time: "8:45am",
+      location: "National Cathedral inside, Accra",
+    },
+    {
+      id: "232021",
+      type: "Accident",
+      fullname: "Nikki Carter",
+      contact: "0244130987",
+      time: "10:10am",
+      location: "Mamprobi, Near Town",
+    },
+    {
+      id: "232022",
+      type: "Theft",
+      fullname: "Maame Yeboah",
+      contact: "0209998888",
+      time: "1:01am",
+      location: "Labadi beach",
+    },
+  ];
 
   const handleStatus = (requestId, status) => {
     setStatuses((prev) => ({
@@ -141,7 +90,6 @@ export default function AdminDashboard() {
         </header>
 
         <div className="flex flex-1 flex-col gap-4 p-4">
-          {/* Conditional Rendering Based on Sidebar Tab */}
           {activeTab === "dashboard" && (
             <div className="overflow-x-auto rounded-xl shadow bg-white">
               <table className="w-full table-auto border-collapse text-sm text-left">
@@ -195,11 +143,13 @@ export default function AdminDashboard() {
                   })}
                 </tbody>
               </table>
+            <Modal />
+
             </div>
           )}
 
-          {activeTab === "Weekly" && <HistoryPage />}
-          <Modal />
+          {activeTab === "weekly" && <HistoryPage />}
+
         </div>
       </SidebarInset>
     </SidebarProvider>

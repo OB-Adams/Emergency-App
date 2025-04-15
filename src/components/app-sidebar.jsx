@@ -24,11 +24,11 @@ const data = {
       items: [
         {
           title: "Dashboard",
-          url: "#",
+          url: "dashboard",
         },
         {
           title: "Active Requests",
-          url: "#",
+          url: "active",
         },
       ],
     },
@@ -38,24 +38,18 @@ const data = {
       items: [
         {
           title: "Weekly",
-          url: "#",
-        },
-        {
-          title: "Monthly",
-          url: "#",
-        },
-        {
-          title: "Yearly",
-          url: "#",
+          url: "weekly",
         },
       ],
     },
   ],
 }
 
-export function AppSidebar({
-  ...props
-}) {
+export function AppSidebar({ setActiveTab, ...props }) {
+  const handleTabClick = (tab) => {
+    setActiveTab(tab.toLowerCase());
+  };
+
   return (
     <Sidebar {...props}>
       <SidebarHeader className={"flex-row items-center"}>
@@ -69,7 +63,6 @@ export function AppSidebar({
         </span>
       </SidebarHeader>
       <SidebarContent>
-        {/* We create a SidebarGroup for each parent. */}
         {data.navMain.map((item) => (
           <SidebarGroup key={item.title}>
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
@@ -77,8 +70,14 @@ export function AppSidebar({
               <SidebarMenu>
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <a href={item.url}>{item.title}</a>
+                    <SidebarMenuButton
+                      asChild
+                      onClick={() => handleTabClick(item.url)}
+                      isActive={item.url === props.activeTab}
+                    >
+                      <a href="#" onClick={(e) => e.preventDefault()}>
+                        {item.title}
+                      </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
