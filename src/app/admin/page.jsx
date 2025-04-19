@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import { AppSidebar } from "../../components/app-sidebar";
-import { SidebarProvider, SidebarInset, SidebarTrigger, Button } from "../../components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "../../components/ui/sidebar";
 import { Separator } from "../../components/ui/separator";
 import { Modal } from "../../components/ui/modal";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import RequestTable from "./RequestTable";
+import RequestDetails from "./RequestDetails";
 
 // HistoryPage Component
 const HistoryPage = () => {
@@ -23,7 +25,7 @@ const HistoryPage = () => {
 
   return (
     <div className="p-4 bg-white rounded-xl shadow">
-        {view === "weekly" && (
+      {view === "weekly" && (
         <div>
           <h2 className="text-xl font-bold mb-2">Weekly Emergency Requests</h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -44,7 +46,8 @@ const HistoryPage = () => {
 // Main Dashboard
 export default function AdminDashboard() {
   const [statuses, setStatuses] = useState({});
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("active-requests");
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
   const sampleRequests = [
     {
@@ -54,6 +57,9 @@ export default function AdminDashboard() {
       contact: "0546777888",
       time: "8:45am",
       location: "National Cathedral inside, Accra",
+      description: "Fire outbreak in the main hall, heavy smoke reported.",
+      status: "pending",
+      createdAt: "2025-04-18T08:45:00Z",
     },
     {
       id: "232021",
@@ -62,6 +68,9 @@ export default function AdminDashboard() {
       contact: "0244130987",
       time: "10:10am",
       location: "Mamprobi, Near Town",
+      description: "Car accident involving two vehicles, one person injured.",
+      status: "pending",
+      createdAt: "2025-04-18T10:10:00Z",
     },
     {
       id: "232022",
@@ -70,6 +79,31 @@ export default function AdminDashboard() {
       contact: "0209998888",
       time: "1:01am",
       location: "Labadi beach",
+      description: "Bag stolen while walking on the beach at night.",
+      status: "pending",
+      createdAt: "2025-04-19T01:01:00Z",
+    },
+    {
+      id: "232023",
+      type: "Medical",
+      fullname: "Kwame Asante",
+      contact: "0551234567",
+      time: "3:30pm",
+      location: "Korle Bu Teaching Hospital, Accra",
+      description: "Patient experiencing chest pain, urgent assistance needed.",
+      status: "pending",
+      createdAt: "2025-04-18T15:30:00Z",
+    },
+    {
+      id: "232024",
+      type: "Flood",
+      fullname: "Ama Mensah",
+      contact: "0278901234",
+      time: "6:20pm",
+      location: "Dzorwulu, Accra",
+      description: "Severe flooding in residential area, water entering homes.",
+      status: "pending",
+      createdAt: "2025-04-18T18:20:00Z",
     },
   ];
 
@@ -78,6 +112,14 @@ export default function AdminDashboard() {
       ...prev,
       [requestId]: status,
     }));
+  };
+
+  const handleRowClick = (request) => {
+    if (selectedRequest && selectedRequest.id === request.id) {
+      setSelectedRequest(null); // Deselect if clicking the same row
+    } else {
+      setSelectedRequest(request);
+    }
   };
 
   return (
@@ -91,65 +133,30 @@ export default function AdminDashboard() {
 
         <div className="flex flex-1 flex-col gap-4 p-4">
           {activeTab === "dashboard" && (
-            <div className="overflow-x-auto rounded-xl shadow bg-white">
-              <table className="w-full table-auto border-collapse text-sm text-left">
-                <thead className="bg-gray-200">
-                  <tr>
-                    <th className="px-4 py-2">Request ID</th>
-                    <th className="px-4 py-2">Request Type</th>
-                    <th className="px-4 py-2">User's Fullname</th>
-                    <th className="px-4 py-2">User's Contact</th>
-                    <th className="px-4 py-2">Time of Request</th>
-                    <th className="px-4 py-2">Location</th>
-                    <th className="px-4 py-2">Is the request complete?</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sampleRequests.map((request) => {
-                    const rowStatus = statuses[request.id];
-                    return (
-                      <tr
-                        key={request.id}
-                        className={
-                          rowStatus === "yes"
-                            ? "bg-green-200"
-                            : rowStatus === "no"
-                            ? "bg-red-200"
-                            : ""
-                        }
-                      >
-                        <td className="px-4 py-2 border-t">{request.id}</td>
-                        <td className="px-4 py-2 border-t">{request.type}</td>
-                        <td className="px-4 py-2 border-t">{request.fullname}</td>
-                        <td className="px-4 py-2 border-t">{request.contact}</td>
-                        <td className="px-4 py-2 border-t">{request.time}</td>
-                        <td className="px-4 py-2 border-t">{request.location}</td>
-                        <td className="px-4 py-2 border-t space-x-2">
-                          <button
-                            className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                            onClick={() => handleStatus(request.id, "yes")}
-                          >
-                            YES
-                          </button>
-                          <button
-                            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                            onClick={() => handleStatus(request.id, "no")}
-                          >
-                            NO
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            <Modal />
+            <div className="p-4 bg-white rounded-xl shadow">
+              <h2 className="text-xl font-bold mb-2">Dashboard</h2>
+              <p>Dashboard content coming soon...</p>
+            </div>
+          )}
 
+          {activeTab === "active-requests" && (
+            <div>
+              <RequestTable
+                requests={sampleRequests}
+                statuses={statuses}
+                handleStatus={handleStatus}
+                onRowClick={handleRowClick}
+                selectedRequestId={selectedRequest?.id}
+              />
+              <RequestDetails
+                request={selectedRequest}
+                onClose={() => setSelectedRequest(null)}
+              />
+              <Modal />
             </div>
           )}
 
           {activeTab === "weekly" && <HistoryPage />}
-
         </div>
       </SidebarInset>
     </SidebarProvider>

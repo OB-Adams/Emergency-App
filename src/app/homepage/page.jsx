@@ -18,7 +18,7 @@ export default function Homepage() {
   const modalRef = useRef(null);
 
   if (status === 'loading') {
-    return <p>Loading...</p>;
+    return <p className="text-center text-gray-600">Loading...</p>;
   }
 
   if (status === 'unauthenticated') {
@@ -31,7 +31,7 @@ export default function Homepage() {
   const [location, setLocation] = useState('');
   const [coordinates, setCoordinates] = useState(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
-  const [isFetchingLocation, setIsFetchingLocation] = useState(false); // New state for loading indicator
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
   const reverseGeocode = async (lng, lat) => {
     try {
@@ -66,7 +66,6 @@ export default function Homepage() {
     setIsMapOpen(false);
   };
 
-  // New function to handle "Use Current Location"
   const handleUseCurrentLocation = () => {
     if (navigator.geolocation) {
       setIsFetchingLocation(true);
@@ -169,13 +168,14 @@ export default function Homepage() {
   };
 
   return (
-    <div className="font-[family-name:var(--font-geist-sans)]">
+    <div className="font-[family-name:var(--font-geist-sans)] min-h-screen">
       <Header />
-      <p className="text-red-600 text-center font-bold text-sm sm:text-base md:text-xl">
+      <p className="text-red-600 text-center font-bold text-sm sm:text-base md:text-lg lg:text-xl mt-2 sm:mt-4">
         Welcome, {session.user.name || 'Guest'}!
       </p>
-      <main className="bg-white p-4 flex min-h-screen gap-14 rounded-2xl border border-gray-200 m-3.5">
-        <div className="flex-1/2 m-2">
+      <main className="bg-white p-3 sm:p-4 md:p-6 lg:p-8 flex flex-col lg:flex-row min-h-[calc(100vh-80px)] gap-4 sm:gap-6 md:gap-8 lg:gap-14 rounded-2xl border border-gray-200 m-2 sm:m-3.5">
+        {/* Left Section: Emergency Type and Description */}
+        <div className="w-full lg:w-1/2 m-1 sm:m-2">
           <EmergencyType
             value={emergencyType}
             onChange={(newType) => {
@@ -184,11 +184,11 @@ export default function Homepage() {
             }}
           />
           {emergencyType === "Other" && (
-            <div className="mt-2.5 h-auto border border-red-600 w-full">
+            <div className="mt-2 sm:mt-2.5 h-auto border border-red-600 w-full">
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full rounded-2xl p-2 border-none focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full rounded-2xl p-2 sm:p-3 border-none focus:outline-none focus:ring-2 focus:ring-red-500 text-sm sm:text-base"
                 placeholder="Name the emergency: eg. Stuck in elevator"
               />
             </div>
@@ -199,36 +199,39 @@ export default function Homepage() {
           />
         </div>
 
-        <div className="flex-1/2">
+        {/* Right Section: Location and Proof */}
+        <div className="w-full lg:w-1/2">
+          {/* Location Section */}
           <div>
-            <h2 className="text-lg font-bold">Location</h2>
-            <hr className="mt-2.5 mb-4 border-gray-300" />
-            <div className="flex w-full items-center">
-              <img
-                src="/icons/location.svg"
-                alt="map pin"
-                className="w-6 h-6 mr-2.5"
-              />
-              <MapboxAutocomplete
-                value={location}
-                onChange={handleLocationChange}
-              />
+            <h2 className="text-base sm:text-lg md:text-xl font-bold">Location</h2>
+            <hr className="mt-2 mb-3 sm:mt-2.5 sm:mb-4 border-gray-300" />
+            <div className="flex flex-col sm:flex-row w-full items-start sm:items-center gap-2 sm:gap-0">
+              <div className="flex items-center w-full">
+                <img
+                  src="/icons/location.svg"
+                  alt="map pin"
+                  className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-2.5"
+                />
+                <MapboxAutocomplete
+                  value={location}
+                  onChange={handleLocationChange}
+                />
+              </div>
               <Button
                 variant="outline"
-                className="text-red-600 border-red-600 hover:bg-red-100 ml-2.5"
+                className="text-red-600 border-red-600 hover:bg-red-100 w-full sm:w-auto text-sm sm:text-base sm:ml-2.5"
                 onClick={() => setIsMapOpen(true)}
               >
                 Change
               </Button>
             </div>
-            {/* Add "Use Current Location" text */}
             <div className="mt-2">
               {isFetchingLocation ? (
-                <p className="text-gray-600 text-sm">Fetching your location...</p>
+                <p className="text-gray-600 text-xs sm:text-sm">Fetching your location...</p>
               ) : (
                 <button
                   onClick={handleUseCurrentLocation}
-                  className="text-red-600 ml-10 text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="text-red-600 text-xs sm:text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 ml-0 sm:ml-10"
                   aria-label="Use your current location"
                 >
                   Use Current Location
@@ -237,19 +240,20 @@ export default function Homepage() {
             </div>
           </div>
 
+          {/* Map Modal */}
           {isMapOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
               <div
                 ref={modalRef}
-                className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full mx-4 border border-red-600"
+                className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full h-full sm:h-auto sm:max-w-3xl mx-2 sm:mx-4 border border-red-600"
               >
-                <h2 className="text-lg font-bold mb-4">Select Location</h2>
+                <h2 className="text-base sm:text-lg md:text-xl font-bold mb-3 sm:mb-4">Select Location</h2>
                 <MapboxMap
                   onLocationSelect={handleLocationSelect}
                   onClose={() => setIsMapOpen(false)}
                 />
                 <Button
-                  className="mt-4 bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700"
+                  className="mt-3 sm:mt-4 bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 w-full sm:w-auto text-sm sm:text-base"
                   onClick={() => setIsMapOpen(false)}
                 >
                   Close
@@ -258,48 +262,49 @@ export default function Homepage() {
             </div>
           )}
 
-          <div className="mt-6">
-            <h2 className="text-lg font-bold mb-2">Attach proof</h2>
-            <hr className="mt-2.5 mb-4 border-gray-300" />
-            <div className="border-2 border-red-600 h-50 rounded-lg p-4 flex justify-around items-center">
+          {/* Attach Proof Section */}
+          <div className="mt-4 sm:mt-6">
+            <h2 className="text-base sm:text-lg md:text-xl font-bold mb-2">Attach Proof</h2>
+            <hr className="mt-2 mb-3 sm:mt-2.5 sm:mb-4 border-gray-300" />
+            <div className="border-2 border-red-600 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row justify-around items-center gap-2 sm:gap-4">
               <button
                 onClick={proofClick}
-                className="flex flex-col items-center hover:bg-red-50 p-5 text-center"
+                className="flex flex-col items-center hover:bg-red-50 p-3 sm:p-5 text-center"
               >
                 <img
                   src="/icons/camera.png"
                   alt="Camera"
-                  className="mb-1 w-16 h-16"
+                  className="mb-1 w-12 h-12 sm:w-16 sm:h-16"
                 />
-                <span className="text-lg text-red-600">Click Pictures</span>
+                <span className="text-sm sm:text-lg text-red-600">Images</span>
               </button>
               <button
                 onClick={proofClick}
-                className="flex flex-col items-center hover:bg-red-50 p-5 text-center"
+                className="flex flex-col items-center hover:bg-red-50 p-3 sm:p-5 text-center"
               >
                 <img
                   src="/icons/video.png"
                   alt="Video"
-                  className="w-16 h-16 mb-1"
+                  className="mb-1 w-12 h-12 sm:w-16 sm:h-16"
                 />
-                <span className="text-lg text-red-600">Video Recording</span>
+                <span className="text-sm sm:text-lg text-red-600">Video Recording</span>
               </button>
               <button
                 onClick={proofClick}
-                className="flex flex-col items-center hover:bg-red-50 p-5 text-center"
+                className="flex flex-col items-center hover:bg-red-50 p-3 sm:p-5 text-center"
               >
                 <img
                   src="/icons/voice.png"
                   alt="Mic"
-                  className="w-16 h-16 mb-1"
+                  className="mb-1 w-12 h-12 sm:w-16 sm:h-16"
                 />
-                <span className="text-lg text-red-600">Voice Recording</span>
+                <span className="text-sm sm:text-lg text-red-600">Voice Recording</span>
               </button>
             </div>
-            <p className="text-sm text-gray-500 text-center mt-2">**Coming Soon**</p>
+            <p className="text-xs sm:text-sm text-gray-500 text-center mt-2">**Coming Soon**</p>
             <Button
               onClick={handleSubmit}
-              className="mt-6 bg-red-600 text-white px-6 py-2 rounded-3xl hover:bg-red-700 w-full md:w-auto"
+              className="mt-4 sm:mt-6 bg-red-600 text-white px-4 sm:px-6 py-2 rounded-3xl hover:bg-red-700 w-full sm:w-full text-sm sm:text-base"
             >
               Submit Emergency
             </Button>
