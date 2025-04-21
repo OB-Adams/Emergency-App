@@ -21,7 +21,8 @@ export async function POST(req) {
     const emergencyRequests = db.collection('emergency_requests'); 
 
     const result = await emergencyRequests.insertOne({
-      userName: session.user.name || '',
+      userName: session.user.name || 'Guest',
+      contact: session.user.mobilePhone || '', 
       emergencyType,
       description: description || '',
       location,
@@ -54,7 +55,7 @@ export async function GET() {
       id: doc._id.toString(),
       type: doc.emergencyType || 'N/A',
       fullname: doc.userName || 'Unknown',
-      contact: 'Not provided', // Placeholder, unless you collect contact info
+      contact: doc.contact || 'Not provided', 
       time: new Date(doc.createdAt).toLocaleTimeString(),
       location: doc.location || 'Not specified',
       description: doc.description || '',

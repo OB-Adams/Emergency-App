@@ -41,7 +41,7 @@ const RequestTable = ({ requests, statuses, handleStatus, onRowClick, selectedRe
                 <td className="px-4 py-2 border-t space-x-2">
                   <span className="capitalize">{rowStatus}</span>
                   <button
-                    className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                    className="bg-green-500 text-white px-3 py-1 rounded hover:cursor-pointer hover:bg-green-600"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleStatus(request.id, "yes");
@@ -50,7 +50,7 @@ const RequestTable = ({ requests, statuses, handleStatus, onRowClick, selectedRe
                     YES
                   </button>
                   <button
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:cursor-pointer hover:bg-red-600"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleStatus(request.id, "no");

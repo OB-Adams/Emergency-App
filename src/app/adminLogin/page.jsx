@@ -81,7 +81,7 @@ export default function AdminLogin() {
         {/* Submit Button */}
         <button 
           type="submit"
-          className="w-full bg-red-600 text-white p-2 rounded-full hover:bg-blue-600"
+          className="w-full bg-red-600 text-white p-2 rounded-full hover:bg-red-500 cursor-pointer"
         >
           Login
         </button>          

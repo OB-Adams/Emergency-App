@@ -77,6 +77,7 @@ export const authOptions = {
           id: user._id.toString(),
           email: user.email,
           name: user.fullName,
+          mobilePhone: user.mobilePhone,
           isAdmin: req.body?.action === "adminLogin",
         };
       },
@@ -87,12 +88,14 @@ export const authOptions = {
       if (user) {
         token.id = user.id;
         token.isAdmin = user.isAdmin;
+        token.mobilePhone = user.mobilePhone;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id;
+        session.user.mobilePhone = token.mobilePhone;
         session.user.isAdmin = token.isAdmin;
       }
       return session;
@@ -100,7 +103,7 @@ export const authOptions = {
   },
   pages: {
     signIn: "/login",
-    signOut: "/login",
+    signOut: "/",
     error: "/auth/error",
   },
   secret: process.env.NEXTAUTH_SECRET,
