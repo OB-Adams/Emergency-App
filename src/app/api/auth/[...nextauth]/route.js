@@ -2,9 +2,9 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare, hash } from "bcryptjs";
 import { SignupFormSchema, LoginSchema } from "../../../lib/definitions";
-import { connectDB } from "../../../lib/utils/db"; // Updated import
+import { connectDB } from "../../../lib/utils/db";
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -15,15 +15,10 @@ const handler = NextAuth({
         mobilePhone: { label: "Mobile Phone", type: "tel" },
       },
       async authorize(credentials, req) {
-        const { db, usersCollection, adminUsersCollection } = await connectDB(); // Connect to DB
-        console.log("🔗 Database connected before querying users");
-
+        const { db, usersCollection, adminUsersCollection } = await connectDB();
         const { email, password, fullName, mobilePhone } = credentials;
 
         if (req.body?.action === "signup") {
-          console.log("🟢 Processing signup request:", credentials);
-
-          // Validate input
           const validation = SignupFormSchema.safeParse({
             fullName,
             email,
@@ -32,23 +27,14 @@ const handler = NextAuth({
           });
 
           if (!validation.success) {
-            console.error(
-              "❌ Signup validation failed:",
-              validation.error.errors
-            );
             throw new Error("Invalid input. Please check the provided data.");
           }
 
-          // Check if user exists
           const existingUser = await usersCollection.findOne({ email });
-          console.log("🔍 Checking for existing user:", existingUser);
-
           if (existingUser) {
-            console.error("❌ Email already exists:", email);
             throw new Error(JSON.stringify({ email: "Email already exists." }));
           }
 
-          // Hash password & create user
           const hashedPassword = await hash(password, 10);
           const newUser = {
             fullName,
@@ -59,8 +45,6 @@ const handler = NextAuth({
           };
 
           const insertedUser = await usersCollection.insertOne(newUser);
-          console.log("✅ New user created successfully:", insertedUser);
-
           return {
             id: insertedUser.insertedId.toString(),
             email: newUser.email,
@@ -68,38 +52,24 @@ const handler = NextAuth({
           };
         }
 
-        // Handle login (admin or regular user)
-        console.log("🔍 Processing login request for:", email);
         const validationLogin = LoginSchema.safeParse({ email, password });
-
         if (!validationLogin.success) {
-          console.error(
-            "❌ Login validation failed:",
-            validationLogin.error.errors
-          );
           throw new Error("Invalid login credentials.");
         }
 
         let user;
-
-        // Check if it's an admin login or regular user login
         if (req.body?.action === "adminLogin") {
-          console.log("🟢 Processing admin login request:", email);
-          user = await adminUsersCollection.findOne({ email }); // Query admin_users collection
+          user = await adminUsersCollection.findOne({ email });
         } else {
-          user = await usersCollection.findOne({ email }); // Query regular users collection
+          user = await usersCollection.findOne({ email });
         }
 
-        console.log("🔍 Found user:", user);
-
         if (!user) {
-          console.error("❌ User not found:", email);
           throw new Error(JSON.stringify({ email: "User not found." }));
         }
 
         const isPasswordValid = await compare(password, user.password);
         if (!isPasswordValid) {
-          console.error("❌ Invalid password attempt for:", email);
           throw new Error(JSON.stringify({ password: "Invalid password." }));
         }
 
@@ -107,7 +77,7 @@ const handler = NextAuth({
           id: user._id.toString(),
           email: user.email,
           name: user.fullName,
-          isAdmin: req.body?.action === "adminLogin", // Add a flag to identify if the user is admin
+          isAdmin: req.body?.action === "adminLogin",
         };
       },
     }),
@@ -116,14 +86,14 @@ const handler = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.isAdmin = user.isAdmin; // Store admin flag in JWT
+        token.isAdmin = user.isAdmin;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id;
-        session.user.isAdmin = token.isAdmin; // Attach the admin flag to session
+        session.user.isAdmin = token.isAdmin;
       }
       return session;
     },
@@ -134,6 +104,7 @@ const handler = NextAuth({
     error: "/auth/error",
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
