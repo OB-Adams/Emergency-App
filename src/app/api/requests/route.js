@@ -50,7 +50,7 @@ export async function GET() {
     const emergencyRequests = db.collection('emergency_requests');
 
     const rawRequests = await emergencyRequests.find().sort({ createdAt: -1 }).toArray();
-
+    
     const transformedRequests = rawRequests.map((doc) => ({
       id: doc._id.toString(),
       type: doc.emergencyType || 'N/A',
@@ -58,6 +58,7 @@ export async function GET() {
       contact: doc.contact || 'Not provided', 
       time: new Date(doc.createdAt).toLocaleTimeString(),
       location: doc.location || 'Not specified',
+      coordinates: doc.coordinates || 'Not available',
       description: doc.description || '',
       status: doc.status || 'pending',
       createdAt: doc.createdAt || new Date(),

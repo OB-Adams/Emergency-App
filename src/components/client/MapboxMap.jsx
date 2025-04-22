@@ -13,7 +13,7 @@ const MapboxMap = ({ onLocationSelect, onClose, initialCoordinates, showMarker =
   useEffect(() => {
     if (map.current) return; // Initialize map only once
 
-    const defaultCenter = initialCoordinates || [-74.5, 40]; // Default to New York if no initial coordinates
+    const defaultCenter = initialCoordinates || [-0.186964, 5.603717];
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v11",
