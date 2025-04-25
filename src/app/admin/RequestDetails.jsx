@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import MapboxMap from "../../components/client/MapboxMap";
+import GoogleMap from "../../components/client/GoogleMap";
 
 const RequestDetails = ({ request, onClose }) => {
   const [coordinates, setCoordinates] = useState(null);
@@ -9,13 +9,11 @@ const RequestDetails = ({ request, onClose }) => {
   const geocodeLocation = async (location) => {
     try {
       const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-          location
-        )}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
       );
       const data = await response.json();
-      if (data.features && data.features.length > 0) {
-        const [lng, lat] = data.features[0].geometry.coordinates;
+      if (data.results && data.results.length > 0) {
+        const { lat, lng } = data.results[0].geometry.location;
         setCoordinates({ lng, lat });
       } else {
         console.error("No coordinates found for location:", location);
@@ -68,7 +66,7 @@ const RequestDetails = ({ request, onClose }) => {
         {/* Map Section */}
         <div className="h-64">
           {coordinates ? (
-            <MapboxMap
+            <GoogleMap
               initialCoordinates={coordinates}
               showMarker={true}
             />

@@ -134,3 +134,26 @@
 .animate-zoom {
   animation: zoom 2s infinite;
 }
+
+/* Ensure gmp-autocomplete takes full width and styles are applied */
+gmp-autocomplete {
+  display: block;
+  width: 100%;
+  height: 40px;
+}
+
+/* Style the internal input element */
+gmp-autocomplete::part(input) {
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0.5rem; /* Match the p-2 class (8px) */
+  border: none; /* Border is applied on the gmp-autocomplete element */
+  outline: none;
+}
+
+/* Ensure placeholder is visible */
+gmp-autocomplete::part(input)::placeholder {
+  color: #a0a0a0; /* Adjust placeholder color if needed */
+  opacity: 1; /* Ensure placeholder is fully visible */
+}

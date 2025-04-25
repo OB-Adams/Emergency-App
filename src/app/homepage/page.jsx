@@ -1,4 +1,3 @@
-// src/app/homepage/page.jsx
 'use client';
 
 import { useSession } from 'next-auth/react';
@@ -9,14 +8,39 @@ import { useEffect, useState, useRef } from "react";
 import { Button } from "../../components/ui/button";
 import EmergencyDesc from "../../components/client/EmergencyDesc";
 import { toast } from "sonner";
-import MapboxAutocomplete from "../../components/client/MapboxAutocomplete";
-import MapboxMap from "../../components/client/MapboxMap";
+import GooglePlacesAutocomplete from "../../components/client/GooglePlacesAutocomplete";
+import GoogleMap from "../../components/client/GoogleMap";
 
 export default function Homepage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const modalRef = useRef(null);
+  const { data: session, status } = useSession(); // Hook 1: useContext
+  const router = useRouter(); // Hook 2: useContext
+  const modalRef = useRef(null); // Hook 3: useRef
 
+  // Define all hooks before any early returns
+  const [emergencyType, setEmergencyType] = useState(''); // Hook 4: useState
+  const [description, setDescription] = useState(''); // Hook 5: useState
+  const [location, setLocation] = useState(''); // Hook 6: useState
+  const [coordinates, setCoordinates] = useState(null); // Hook 7: useState
+  const [isMapOpen, setIsMapOpen] = useState(false); // Hook 8: useState
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false); // Hook 9: useState
+
+  useEffect(() => { // Hook 10: useEffect
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsMapOpen(false);
+      }
+    };
+
+    if (isMapOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMapOpen]);
+
+  // Handle loading and authentication status after all hooks
   if (status === 'loading') {
     return <p className="text-center text-gray-600">Loading...</p>;
   }
@@ -26,21 +50,15 @@ export default function Homepage() {
     return null;
   }
 
-  const [emergencyType, setEmergencyType] = useState('');
-  const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
-  const [coordinates, setCoordinates] = useState(null);
-  const [isMapOpen, setIsMapOpen] = useState(false);
-  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
-
+  // Rest of the component logic (only reached if status is 'authenticated')
   const reverseGeocode = async (lng, lat) => {
     try {
       const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
       );
       const data = await response.json();
-      if (data.features && data.features.length > 0) {
-        return data.features[0].place_name;
+      if (data.results && data.results.length > 0) {
+        return data.results[0].formatted_address;
       }
       return 'Unknown location';
     } catch (error) {
@@ -101,22 +119,6 @@ export default function Homepage() {
       });
     }
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setIsMapOpen(false);
-      }
-    };
-
-    if (isMapOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isMapOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -212,7 +214,7 @@ export default function Homepage() {
                   alt="map pin"
                   className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-2.5"
                 />
-                <MapboxAutocomplete
+                <GooglePlacesAutocomplete
                   value={location}
                   onChange={handleLocationChange}
                 />
@@ -248,7 +250,7 @@ export default function Homepage() {
                 className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full h-full sm:h-auto sm:max-w-3xl mx-2 sm:mx-4 border border-red-600"
               >
                 <h2 className="text-base sm:text-lg md:text-xl font-bold mb-3 sm:mb-4">Select Location</h2>
-                <MapboxMap
+                <GoogleMap
                   onLocationSelect={handleLocationSelect}
                   onClose={() => setIsMapOpen(false)}
                 />
