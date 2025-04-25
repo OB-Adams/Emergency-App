@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { signOut } from 'next-auth/react'; // Import signOut from NextAuth
 import { AppSidebar } from '../../components/app-sidebar';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '../../components/ui/sidebar';
 import { Separator } from '../../components/ui/separator';
@@ -8,6 +9,7 @@ import { Modal } from '../../components/ui/modal';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import RequestTable from './RequestTable';
 import RequestDetails from './RequestDetails';
+import { Button } from '../../components/ui/button'; // Import Button component
 
 // HistoryPage for chart view
 const HistoryPage = () => {
@@ -90,6 +92,10 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/login' }); // Redirect to login page after sign-out
+  };
+
   return (
     <SidebarProvider className="flex">
       <AppSidebar className="flex-1/6" setActiveTab={setActiveTab} />
@@ -97,6 +103,12 @@ export default function AdminDashboard() {
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
+          <Button
+            onClick={handleSignOut}
+            className="ml-auto bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          >
+            Sign Out
+          </Button>
         </header>
 
         <div className="flex flex-1 flex-col gap-4 p-4">
