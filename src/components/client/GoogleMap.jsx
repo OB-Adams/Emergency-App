@@ -2,12 +2,14 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { loadGoogleMaps } from '../../lib/googleMapsLoader';
+import { Button } from '../../components/ui/button';
 
 const GoogleMap = ({ onLocationSelect, onClose, initialCoordinates, showMarker = false }) => {
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
   const [google, setGoogle] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   useEffect(() => {
     const initMap = async () => {
@@ -17,7 +19,7 @@ const GoogleMap = ({ onLocationSelect, onClose, initialCoordinates, showMarker =
 
         const defaultCenter = initialCoordinates
           ? { lat: initialCoordinates.lat, lng: initialCoordinates.lng }
-          : { lat: 5.603717, lng: -0.186964 }; // Default to Accra, Ghana
+          : { lat: 5.603717, lng: -0.186964 };
 
         const mapInstance = new googleMaps.maps.Map(mapContainer.current, {
           center: defaultCenter,
@@ -26,7 +28,6 @@ const GoogleMap = ({ onLocationSelect, onClose, initialCoordinates, showMarker =
 
         setMap(mapInstance);
 
-        // Add navigation controls
         mapInstance.setOptions({
           zoomControl: true,
           streetViewControl: false,
@@ -34,7 +35,6 @@ const GoogleMap = ({ onLocationSelect, onClose, initialCoordinates, showMarker =
         });
 
         if (showMarker && initialCoordinates) {
-          // Display a marker at the initial coordinates (for RequestDetails)
           const markerInstance = new googleMaps.maps.Marker({
             position: { lat: initialCoordinates.lat, lng: initialCoordinates.lng },
             map: mapInstance,
@@ -43,18 +43,19 @@ const GoogleMap = ({ onLocationSelect, onClose, initialCoordinates, showMarker =
         }
 
         if (!showMarker) {
-          // Allow clicking on the map to select a location (for Homepage)
           mapInstance.addListener('click', (e) => {
             const { lat, lng } = e.latLng;
+            // Remove the previous marker if it exists
             if (marker) {
-              marker.setMap(null); // Remove previous marker
+              marker.setMap(null);
             }
+            // Place a new marker
             const newMarker = new googleMaps.maps.Marker({
               position: { lat: lat(), lng: lng() },
               map: mapInstance,
             });
             setMarker(newMarker);
-            onLocationSelect({ lng: lng(), lat: lat() });
+            setSelectedLocation({ lng: lng(), lat: lat() });
           });
         }
       } catch (error) {
@@ -66,16 +67,42 @@ const GoogleMap = ({ onLocationSelect, onClose, initialCoordinates, showMarker =
 
     return () => {
       if (map) {
-        // Cleanup (Google Maps doesn't have a remove method, but we can clear the reference)
         setMap(null);
+        if (marker) {
+          marker.setMap(null);
+        }
         setMarker(null);
       }
     };
   }, [onLocationSelect, initialCoordinates, showMarker]);
 
+  const handleConfirm = () => {
+    if (selectedLocation) {
+      onLocationSelect(selectedLocation);
+    }
+    onClose();
+  };
+
   return (
     <div>
       <div ref={mapContainer} className="w-full h-64 sm:h-96" />
+      {!showMarker && (
+        <div className="flex justify-between mt-3">
+          <Button
+            onClick={handleConfirm}
+            disabled={!selectedLocation}
+            className="bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400"
+          >
+            Confirm
+          </Button>
+          <Button
+            onClick={onClose}
+            className="bg-red-600 text-white hover:bg-red-700"
+          >
+            Cancel
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

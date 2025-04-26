@@ -33,45 +33,56 @@ const RequestDetails = ({ request, onClose }) => {
 
   if (!request) return null;
 
-  // Format the createdAt timestamp
   const formattedDate = new Date(request.createdAt).toLocaleString("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
   });
 
   return (
-    <div className="mt-4 p-4 bg-gray-100 rounded-xl shadow">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-lg font-bold">Request Details</h3>
+    <div className="mt-6 bg-white rounded-2xl shadow-lg border border-gray-100">
+      {/* Header with Gradient */}
+      <div className="flex justify-between items-center mb-6 bg-gradient-to-r from-red-500 to-red-700 p-4 rounded-t-xl">
+        <h3 className="text-xl font-bold text-white">Request Details</h3>
         <button
           onClick={onClose}
-          className="text-red-600 hover:underline"
+          className="text-white hover:text-gray-200 font-semibold transition-colors duration-200"
         >
           Close
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <div className="grid grid-cols-1 p-6 md:grid-cols-2 gap-6">
         {/* Details Section */}
-        <div>
-          <p><strong>Request ID:</strong> {request.id}</p>
-          <p><strong>Type:</strong> {request.type}</p>
-          <p><strong>User's Fullname:</strong> {request.fullname}</p>
-          <p><strong>Contact:</strong> {request.contact}</p>
-          <p><strong>Time:</strong> {request.time}</p>
-          <p><strong>Location:</strong> {request.location}</p>
-          <p><strong>Description:</strong> {request.description}</p>
-          <p><strong>Status:</strong> {request.status}</p>
-          <p><strong>Created At:</strong> {formattedDate}</p>
+        <div className="space-y-4">
+          {[
+            { label: 'Request ID', value: request.id },
+            { label: 'Type', value: request.type },
+            { label: 'User\'s Fullname', value: request.fullname },
+            { label: 'Contact', value: request.contact },
+            { label: 'Time', value: request.time },
+            { label: 'Location', value: request.location },
+            { label: 'Description', value: request.description },
+            { label: 'Status', value: request.status },
+            { label: 'Created At', value: formattedDate },
+          ].map((item, index) => (
+            <div key={index} className="flex items-start">
+              <span className="font-semibold text-gray-700 w-32">{item.label}:</span>
+              <span className="text-gray-600 flex-1">{item.value}</span>
+            </div>
+          ))}
         </div>
+
         {/* Map Section */}
-        <div className="h-64">
+        <div className="h-72 rounded-lg overflow-hidden border border-gray-200 shadow-md">
           {coordinates ? (
             <GoogleMap
               initialCoordinates={coordinates}
               showMarker={true}
             />
           ) : (
-            <p className="text-gray-600">Loading map...</p>
+            <div className="h-full flex items-center justify-center bg-gray-100">
+              <p className="text-gray-600">Loading map...</p>
+            </div>
           )}
         </div>
       </div>

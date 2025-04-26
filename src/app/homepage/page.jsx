@@ -10,21 +10,23 @@ import EmergencyDesc from "../../components/client/EmergencyDesc";
 import { toast } from "sonner";
 import GooglePlacesAutocomplete from "../../components/client/GooglePlacesAutocomplete";
 import GoogleMap from "../../components/client/GoogleMap";
+import MediaCapture from "../../components/MediaCapture";
 
 export default function Homepage() {
-  const { data: session, status } = useSession(); // Hook 1: useContext
-  const router = useRouter(); // Hook 2: useContext
-  const modalRef = useRef(null); // Hook 3: useRef
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const modalRef = useRef(null);
 
-  // Define all hooks before any early returns
-  const [emergencyType, setEmergencyType] = useState(''); // Hook 4: useState
-  const [description, setDescription] = useState(''); // Hook 5: useState
-  const [location, setLocation] = useState(''); // Hook 6: useState
-  const [coordinates, setCoordinates] = useState(null); // Hook 7: useState
-  const [isMapOpen, setIsMapOpen] = useState(false); // Hook 8: useState
-  const [isFetchingLocation, setIsFetchingLocation] = useState(false); // Hook 9: useState
+  const [emergencyType, setEmergencyType] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+  const [coordinates, setCoordinates] = useState(null);
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  const [mediaType, setMediaType] = useState(null);
+  const [mediaItems, setMediaItems] = useState([]); // Store multiple media items
 
-  useEffect(() => { // Hook 10: useEffect
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setIsMapOpen(false);
@@ -40,7 +42,6 @@ export default function Homepage() {
     };
   }, [isMapOpen]);
 
-  // Handle loading and authentication status after all hooks
   if (status === 'loading') {
     return <p className="text-center text-gray-600">Loading...</p>;
   }
@@ -50,7 +51,6 @@ export default function Homepage() {
     return null;
   }
 
-  // Rest of the component logic (only reached if status is 'authenticated')
   const reverseGeocode = async (lng, lat) => {
     try {
       const response = await fetch(
@@ -120,6 +120,25 @@ export default function Homepage() {
     }
   };
 
+  const handleMediaCapture = (blob) => {
+    setMediaItems((prev) => [
+      ...prev,
+      { type: mediaType, blob }
+    ]);
+    toast.success(`${mediaType === 'image' ? 'Image' : mediaType === 'video' ? 'Video' : 'Audio'} captured successfully!`, {
+      duration: 3000,
+      className: 'bg-green-500 text-white border border-green-700 rounded-xl shadow-md',
+    });
+  };
+
+  const removeMediaItem = (index) => {
+    setMediaItems((prev) => prev.filter((_, i) => i !== index));
+    toast.success('Media removed successfully.', {
+      duration: 3000,
+      className: 'bg-green-500 text-white border border-green-700 rounded-xl shadow-md',
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!emergencyType || !location) {
@@ -130,12 +149,32 @@ export default function Homepage() {
       });
       return;
     }
-    console.log({ emergencyType, description, location, coordinates });
+
+    // Convert media blobs to base64
+    const mediaPromises = mediaItems.map(async (item) => {
+      const base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(item.blob);
+      });
+      return { type: item.type, data: base64 };
+    });
+
+    const media = await Promise.all(mediaPromises);
+
+    const requestData = {
+      emergencyType,
+      description,
+      location,
+      coordinates,
+      media, // Array of { type, data } objects
+    };
+
     try {
       const response = await fetch('/api/requests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emergencyType, description, location, coordinates }),
+        body: JSON.stringify(requestData),
       });
       const data = await response.json();
       if (data.success) {
@@ -144,6 +183,14 @@ export default function Homepage() {
           className: 'bg-green-500 text-white border border-green-700 rounded-xl shadow-md',
           descriptionClassName: 'text-sm font-medium',
         });
+
+        // Reset form fields
+        setEmergencyType('');
+        setDescription('');
+        setLocation('');
+        setCoordinates(null);
+        setMediaItems([]);
+        setMediaType(null);
       } else {
         toast.error('Failed to send request.', {
           duration: 3000,
@@ -160,13 +207,8 @@ export default function Homepage() {
     }
   };
 
-  const proofClick = async (e) => {
-    e.preventDefault();
-    toast.error('Feature Coming Soon.', {
-      duration: 3000,
-      className: 'bg-red-600 text-white border border-red-800 rounded-xl shadow-md',
-      descriptionClassName: 'text-sm font-medium',
-    });
+  const openMediaCapture = (type) => {
+    setMediaType(type);
   };
 
   return (
@@ -254,12 +296,6 @@ export default function Homepage() {
                   onLocationSelect={handleLocationSelect}
                   onClose={() => setIsMapOpen(false)}
                 />
-                <Button
-                  className="mt-3 sm:mt-4 bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 w-full sm:w-auto text-sm sm:text-base"
-                  onClick={() => setIsMapOpen(false)}
-                >
-                  Close
-                </Button>
               </div>
             </div>
           )}
@@ -270,7 +306,7 @@ export default function Homepage() {
             <hr className="mt-2 mb-3 sm:mt-2.5 sm:mb-4 border-gray-300" />
             <div className="border-2 border-red-600 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row justify-around items-center gap-2 sm:gap-4">
               <button
-                onClick={proofClick}
+                onClick={() => openMediaCapture('image')}
                 className="flex flex-col items-center hover:bg-red-50 p-3 sm:p-5 text-center"
               >
                 <img
@@ -281,7 +317,7 @@ export default function Homepage() {
                 <span className="text-sm sm:text-lg text-red-600">Images</span>
               </button>
               <button
-                onClick={proofClick}
+                onClick={() => openMediaCapture('video')}
                 className="flex flex-col items-center hover:bg-red-50 p-3 sm:p-5 text-center"
               >
                 <img
@@ -292,7 +328,7 @@ export default function Homepage() {
                 <span className="text-sm sm:text-lg text-red-600">Video Recording</span>
               </button>
               <button
-                onClick={proofClick}
+                onClick={() => openMediaCapture('audio')}
                 className="flex flex-col items-center hover:bg-red-50 p-3 sm:p-5 text-center"
               >
                 <img
@@ -303,7 +339,31 @@ export default function Homepage() {
                 <span className="text-sm sm:text-lg text-red-600">Voice Recording</span>
               </button>
             </div>
-            <p className="text-xs sm:text-sm text-gray-500 text-center mt-2">**Coming Soon**</p>
+
+            {/* Display list of captured media */}
+            {mediaItems.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm text-gray-600">
+                  Attached Media ({mediaItems.length} {mediaItems.length === 1 ? 'item' : 'items'}):
+                </p>
+                <ul className="mt-2 space-y-2">
+                  {mediaItems.map((item, index) => (
+                    <li key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded-lg">
+                      <span className="text-sm text-gray-700">
+                        {item.type.charAt(0).toUpperCase() + item.type.slice(1)} {index + 1}
+                      </span>
+                      <button
+                        onClick={() => removeMediaItem(index)}
+                        className="text-red-600 hover:text-red-800 text-sm"
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <Button
               onClick={handleSubmit}
               className="mt-4 sm:mt-6 bg-red-600 text-white px-4 sm:px-6 py-2 rounded-3xl hover:bg-red-700 w-full sm:w-full text-sm sm:text-base"
@@ -313,6 +373,15 @@ export default function Homepage() {
           </div>
         </div>
       </main>
+
+      {/* Media Capture Modal */}
+      {mediaType && (
+        <MediaCapture
+          type={mediaType}
+          onCapture={handleMediaCapture}
+          onClose={() => setMediaType(null)}
+        />
+      )}
     </div>
   );
 }
