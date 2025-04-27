@@ -11,7 +11,7 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { emergencyType, description, location, coordinates } = await req.json();
+    const { emergencyType, description, location, coordinates, media } = await req.json();
 
     if (!emergencyType || !location || !coordinates) {
       return NextResponse.json({ success: false, error: 'Missing fields' }, { status: 400 });
@@ -27,6 +27,7 @@ export async function POST(req) {
       description: description || '',
       location,
       coordinates,
+      media: media || [],
       status: 'pending',
       createdAt: new Date(),
     });
@@ -61,6 +62,7 @@ export async function GET() {
       coordinates: doc.coordinates || 'Not available',
       description: doc.description || '',
       status: doc.status || 'pending',
+      media: doc.media || [],
       createdAt: doc.createdAt || new Date(),
     }));
 

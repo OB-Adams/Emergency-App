@@ -61,7 +61,7 @@ const RequestDetails = ({ request, onClose }) => {
         <div className="space-y-4">
           {[
             { label: 'Request ID', value: request.id },
-            { label: 'Type', value: request.emergencyType },
+            { label: 'Type', value: request.type },
             { label: 'User\'s Fullname', value: request.fullname },
             { label: 'Contact', value: request.contact },
             { label: 'Time', value: request.time },
