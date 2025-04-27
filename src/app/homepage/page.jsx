@@ -263,7 +263,7 @@ export default function Homepage() {
               </div>
               <Button
                 variant="outline"
-                className="text-red-600 border-red-600 hover:bg-red-100 w-full sm:w-auto text-sm sm:text-base sm:ml-2.5"
+                className="text-red-600 border-red-600 hover:bg-red-100 w-full sm:w-auto text-sm sm:text-base sm:ml-2.5 hover:cursor-pointer"
                 onClick={() => setIsMapOpen(true)}
               >
                 Change
@@ -275,7 +275,7 @@ export default function Homepage() {
               ) : (
                 <button
                   onClick={handleUseCurrentLocation}
-                  className="text-red-600 text-xs sm:text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 ml-0 sm:ml-10"
+                  className="text-red-600 text-xs sm:text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 ml-0 sm:ml-10 hover:cursor-pointer"
                   aria-label="Use your current location"
                 >
                   Use Current Location
@@ -307,7 +307,7 @@ export default function Homepage() {
             <div className="border-2 border-red-600 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row justify-around items-center gap-2 sm:gap-4">
               <button
                 onClick={() => openMediaCapture('image')}
-                className="flex flex-col items-center hover:bg-red-50 p-3 sm:p-5 text-center"
+                className="flex flex-col items-center hover:bg-red-50 hover:cursor-pointer p-3 sm:p-5 text-center"
               >
                 <img
                   src="/icons/camera.png"
@@ -318,7 +318,7 @@ export default function Homepage() {
               </button>
               <button
                 onClick={() => openMediaCapture('video')}
-                className="flex flex-col items-center hover:bg-red-50 p-3 sm:p-5 text-center"
+                className="flex flex-col items-center hover:bg-red-50 hover:cursor-pointer p-3 sm:p-5 text-center"
               >
                 <img
                   src="/icons/video.png"
@@ -329,7 +329,7 @@ export default function Homepage() {
               </button>
               <button
                 onClick={() => openMediaCapture('audio')}
-                className="flex flex-col items-center hover:bg-red-50 p-3 sm:p-5 text-center"
+                className="flex flex-col items-center hover:bg-red-50 p-3 sm:p-5 hover:cursor-pointer text-center"
               >
                 <img
                   src="/icons/voice.png"
@@ -354,7 +354,7 @@ export default function Homepage() {
                       </span>
                       <button
                         onClick={() => removeMediaItem(index)}
-                        className="text-red-600 hover:text-red-800 text-sm"
+                        className="text-red-600 hover:text-red-800 text-sm hover:cursor-pointer"
                       >
                         Remove
                       </button>
@@ -366,7 +366,7 @@ export default function Homepage() {
 
             <Button
               onClick={handleSubmit}
-              className="mt-4 sm:mt-6 bg-red-600 text-white px-4 sm:px-6 py-2 rounded-3xl hover:bg-red-700 w-full sm:w-full text-sm sm:text-base"
+              className="mt-4 sm:mt-6 bg-red-600 text-white px-4 sm:px-6 py-2 rounded-3xl hover:bg-red-700 w-full sm:w-full text-sm sm:text-base hover:cursor-pointer"
             >
               Submit Emergency
             </Button>

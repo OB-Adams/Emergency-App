@@ -93,7 +93,7 @@ export default function AdminDashboard() {
   };
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/login' }); // Redirect to login page after sign-out
+    await signOut({ callbackUrl: '/' }); // Redirect to login page after sign-out
   };
 
   return (
@@ -105,7 +105,7 @@ export default function AdminDashboard() {
           <Separator orientation="vertical" className="mr-2 h-4" />
           <Button
             onClick={handleSignOut}
-            className="ml-auto bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            className="ml-auto bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 hover:cursor-pointer"
           >
             Sign Out
           </Button>
