@@ -73,7 +73,7 @@ export default function Login() {
         </div>
         <button
           type="submit"
-          className="w-full bg-red-600 text-white p-2 rounded-full hover:bg-red-700 mt-4"
+          className="w-full bg-red-600 text-white p-2 rounded-full hover:cursor-pointer  hover:bg-red-700 mt-4"
         >
           Log in
         </button>

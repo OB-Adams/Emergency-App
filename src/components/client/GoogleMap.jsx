@@ -91,13 +91,13 @@ const GoogleMap = ({ onLocationSelect, onClose, initialCoordinates, showMarker =
           <Button
             onClick={handleConfirm}
             disabled={!selectedLocation}
-            className="bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400"
+            className="bg-green-600 text-white hover:cursor-pointer hover:bg-green-700 disabled:bg-gray-400"
           >
             Confirm
           </Button>
           <Button
             onClick={onClose}
-            className="bg-red-600 text-white hover:bg-red-700"
+            className="bg-red-600 text-white hover:cursor-pointer hover:bg-red-700"
           >
             Cancel
           </Button>

@@ -156,7 +156,7 @@ export default function SignUp() {
         <button
           type="submit"
           disabled={confirmPasswordError !== ''}
-          className="w-full bg-red-600 text-white p-2 rounded-full hover:bg-red-700 mt-4 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full bg-red-600 text-white p-2 hover:cursor-pointer rounded-full hover:bg-red-700 mt-4 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Sign up
         </button>

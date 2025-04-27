@@ -34,7 +34,7 @@ export default function SOSpage() {
         <Link href={"/signup"}>
         <Button
           variant="default"
-          className="text-white bg-red-600 w-32 h-12 hover:bg-red-700"
+          className="text-white bg-red-600 w-32 h-12 hover:bg-red-700 hover:cursor-pointer"
         >
           Sign Up
         </Button>
@@ -43,14 +43,14 @@ export default function SOSpage() {
         <Link href={"/login"}>
         <Button
           variant="outline"
-          className="w-32 h-12 border-red-600 text-red-600 hover:bg-red-100"
+          className="w-32 h-12 border-red-600 text-red-600 hover:bg-red-100 hover:cursor-pointer"
         >
           Login
         </Button>
         </Link>
 
         <Link href={"/adminLogin"}>
-        <Button className="text-white bg-black w-32 h-12" >Admin</Button>
+        <Button className="text-white bg-black w-32 h-12 hover:cursor-pointer" >Admin</Button>
         </Link>
         
       </div>

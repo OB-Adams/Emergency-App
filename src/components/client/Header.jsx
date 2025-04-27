@@ -53,7 +53,7 @@ export default function Header() {
           <Button
             variant="ghost"
             onClick={() => handleButtonClick('home')}
-            className={`w-full flex items-center justify-center rounded-lg px-4 py-2 tracking-widest ${
+            className={`w-full flex items-center justify-center hover:cursor-pointer rounded-lg px-4 py-2 tracking-widest ${
               activeButton === 'home'
                 ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
                 : 'text-gray-700 hover:bg-red-100'
@@ -62,7 +62,7 @@ export default function Header() {
             <img
               src="/icons/home.svg"
               alt="Home"
-              className={`w-5 h-5 mr-2 ${activeButton === 'home' ? 'brightness-0 invert' : ''}`}
+              className={`w-5 h-5 hover:cursor-pointer mr-2 ${activeButton === 'home' ? 'brightness-0 invert' : ''}`}
             />
             Home
           </Button>
@@ -71,7 +71,7 @@ export default function Header() {
           <Button
             variant="ghost"
             onClick={() => handleButtonClick('sos')}
-            className={`w-full flex items-center justify-center rounded-lg px-4 py-2 tracking-widest ${
+            className={`w-full flex items-center justify-center hover:cursor-pointer rounded-lg px-4 py-2 tracking-widest ${
               activeButton === 'sos'
                 ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
                 : 'text-gray-700 hover:bg-red-100'
@@ -80,7 +80,7 @@ export default function Header() {
             <img
               src="/icons/sos.svg"
               alt="SOS"
-              className={`w-5 h-5 mr-2 ${activeButton === 'sos' ? 'brightness-0 invert' : ''}`}
+              className={`w-5 h-5 hover:cursor-pointer mr-2 ${activeButton === 'sos' ? 'brightness-0 invert' : ''}`}
             />
             SOS
           </Button>
@@ -89,7 +89,7 @@ export default function Header() {
           <Button
             variant="ghost"
             onClick={() => handleButtonClick('about')}
-            className={`w-full flex items-center justify-center rounded-lg px-4 py-2 tracking-widest ${
+            className={`w-full flex items-center justify-center hover:cursor-pointer rounded-lg px-4 py-2 tracking-widest ${
               activeButton === 'about'
                 ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
                 : 'text-gray-700 hover:bg-red-100'
@@ -98,7 +98,7 @@ export default function Header() {
             <img
               src="/icons/about.svg"
               alt="About"
-              className={`w-5 h-5 mr-2 ${activeButton === 'about' ? 'brightness-0 invert' : ''}`}
+              className={`w-5 h-5 hover:cursor-pointer mr-2 ${activeButton === 'about' ? 'brightness-0 invert' : ''}`}
             />
             About
           </Button>
@@ -107,7 +107,7 @@ export default function Header() {
           <Button
             variant="ghost"
             onClick={() => handleButtonClick('profile')}
-            className={`w-full flex items-center justify-center rounded-lg px-4 py-2 tracking-widest ${
+            className={`w-full hover:cursor-pointer flex items-center justify-center rounded-lg px-4 py-2 tracking-widest ${
               activeButton === 'profile'
                 ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
                 : 'text-gray-700 hover:bg-red-100'

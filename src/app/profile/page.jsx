@@ -65,7 +65,7 @@ export default function Profile() {
         </p>
         <Accordion type="single" collapsible className="w-full px-4">
           <AccordionItem value="item-1">
-            <AccordionTrigger className="text-xl">Account Details</AccordionTrigger>
+            <AccordionTrigger className="text-xl hover:cursor-pointer">Account Details</AccordionTrigger>
             <AccordionContent>
               <div>
                 <label className="block text-gray-700 font-bold mb-0.5">Full Name</label>
@@ -82,11 +82,11 @@ export default function Profile() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
-            <AccordionTrigger className="text-xl">Settings</AccordionTrigger>
+            <AccordionTrigger className="text-xl hover:cursor-pointer">Settings</AccordionTrigger>
             <AccordionContent>We will implement "theming" here</AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
-            <AccordionTrigger className="text-xl">About</AccordionTrigger>
+            <AccordionTrigger className="text-xl hover:cursor-pointer">About</AccordionTrigger>
             <AccordionContent>
               <a href="/about">Read more about this emergency application</a>
             </AccordionContent>
@@ -94,7 +94,7 @@ export default function Profile() {
         </Accordion>
         <Button
           onClick={handleSignOut}
-          className="w-1/4 h-12 bg-red-600 text-white text-xl p-2 rounded-full hover:bg-red-700 mt-6"
+          className="w-1/4 h-12 bg-red-600 text-white text-xl p-2 rounded-full hover:cursor-pointer hover:bg-red-700 mt-6"
         >
           Sign Out
         </Button>
