@@ -15,7 +15,7 @@ import {
   SidebarRail,
 } from "../components/ui/sidebar"
 
-// This is sample data.
+// Updated sample data to include Analytics, Profile, and Settings
 const data = {
   navMain: [
     {
@@ -30,6 +30,10 @@ const data = {
           title: "Active Requests",
           url: "active-requests",
         },
+        {
+          title: "Analytics",
+          url: "analytics",
+        },
       ],
     },
     {
@@ -39,6 +43,26 @@ const data = {
         {
           title: "Weekly",
           url: "weekly",
+        },
+      ],
+    },
+    {
+      title: "Profile",
+      url: "#",
+      items: [
+        {
+          title: "View Profile",
+          url: "profile",
+        },
+      ],
+    },
+    {
+      title: "Settings",
+      url: "#",
+      items: [
+        {
+          title: "App Settings",
+          url: "settings",
         },
       ],
     },

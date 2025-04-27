@@ -1,44 +1,81 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { signOut } from 'next-auth/react'; // Import signOut from NextAuth
+import { signOut } from 'next-auth/react';
 import { AppSidebar } from '../../components/app-sidebar';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '../../components/ui/sidebar';
 import { Separator } from '../../components/ui/separator';
 import { Modal } from '../../components/ui/modal';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import RequestTable from './RequestTable';
 import RequestDetails from './RequestDetails';
-import { Button } from '../../components/ui/button'; // Import Button component
+import AnalyticsPage from './AnalyticsPage';
+import ProfilePage from './ProfilePage';
+import SettingsPage from './SettingsPage';
+import { Button } from '../../components/ui/button';
+import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import DashboardPage from './DashboardPage';
+
+// Register Chart.js components for HistoryPage
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 // HistoryPage for chart view
 const HistoryPage = () => {
   const [view, setView] = useState('weekly');
 
-  const weeklyData = [
-    { day: 'Mon', requests: 5 },
-    { day: 'Tue', requests: 8 },
-    { day: 'Wed', requests: 3 },
-    { day: 'Thu', requests: 10 },
-    { day: 'Fri', requests: 7 },
-    { day: 'Sat', requests: 4 },
-    { day: 'Sun', requests: 6 },
-  ];
+  const weeklyData = {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [
+      {
+        label: 'Requests',
+        data: [5, 8, 3, 10, 7, 4, 6],
+        backgroundColor: '#FF0000',
+        borderColor: '#FF0000',
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          font: {
+            size: 14,
+          },
+        },
+      },
+      tooltip: {
+        backgroundColor: '#333',
+        titleFont: { size: 14 },
+        bodyFont: { size: 12 },
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: '#E5E7EB',
+        },
+      },
+    },
+    maintainAspectRatio: false,
+  };
 
   return (
     <div className="p-4 bg-white rounded-xl shadow">
       {view === 'weekly' && (
         <div>
           <h2 className="text-xl font-bold mb-2">Weekly Emergency Requests</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={weeklyData}>
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="requests" fill="#FF0000" />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="h-80">
+            <Bar data={weeklyData} options={options} />
+          </div>
         </div>
       )}
     </div>
@@ -93,12 +130,12 @@ export default function AdminDashboard() {
   };
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/' }); // Redirect to login page after sign-out
+    await signOut({ callbackUrl: '/' });
   };
 
   return (
     <SidebarProvider className="flex">
-      <AppSidebar className="flex-1/6" setActiveTab={setActiveTab} />
+      <AppSidebar className="flex-1/6" setActiveTab={setActiveTab} activeTab={activeTab} />
       <SidebarInset className="flex-5/6">
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
@@ -113,10 +150,7 @@ export default function AdminDashboard() {
 
         <div className="flex flex-1 flex-col gap-4 p-4">
           {activeTab === 'dashboard' && (
-            <div className="p-4 bg-white rounded-xl shadow">
-              <h2 className="text-xl font-bold mb-2">Dashboard</h2>
-              <p>Dashboard content coming soon...</p>
-            </div>
+            <DashboardPage/>
           )}
 
           {activeTab === 'active-requests' && (
@@ -144,7 +178,13 @@ export default function AdminDashboard() {
             </div>
           )}
 
+          {activeTab === 'analytics' && <AnalyticsPage />}
+
           {activeTab === 'weekly' && <HistoryPage />}
+
+          {activeTab === 'profile' && <ProfilePage />}
+
+          {activeTab === 'settings' && <SettingsPage />}
         </div>
       </SidebarInset>
     </SidebarProvider>
