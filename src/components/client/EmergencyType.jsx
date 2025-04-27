@@ -23,7 +23,7 @@ export default function EmergencyTypeSelector({ value, onChange }) {
             <button
               key={type.name}
               onClick={() => onChange(type.name)}
-              className={`flex flex-col items-center justify-center w-24 h-24 rounded-full p-1 transition-colors  ${
+              className={`flex flex-col items-center justify-center hover:cursor-pointer w-24 h-24 rounded-full p-1 transition-colors  ${
                 isSelected
                   ? 'bg-red-600 text-white border-red-600'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
@@ -53,7 +53,7 @@ export default function EmergencyTypeSelector({ value, onChange }) {
                   </div>
                 )}
               </div>
-              <span className="mt-2 text-lg">{type.name}</span>
+              <span className="mt-2 text-lg hover:cursor-pointer">{type.name}</span>
             </button>
           );
         })}

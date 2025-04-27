@@ -139,7 +139,7 @@ const MediaCapture = ({ type, onCapture, onClose }) => {
           {type === 'image' && !capturedImage && (
             <Button
               onClick={capturePhoto}
-              className="bg-red-600 text-white hover:bg-red-700"
+              className="bg-red-600 text-white hover:bg-red-700 hover:cursor-pointer"
             >
               Capture
             </Button>
@@ -150,7 +150,7 @@ const MediaCapture = ({ type, onCapture, onClose }) => {
               onClick={isRecording ? stopRecording : startRecording}
               className={`${
                 isRecording ? 'bg-red-600' : 'bg-green-600'
-              } text-white hover:bg-opacity-90`}
+              } text-white hover:bg-opacity-90 hover:cursor-pointer`}
             >
               {isRecording ? 'Stop Recording' : 'Start Recording'}
             </Button>
@@ -159,7 +159,7 @@ const MediaCapture = ({ type, onCapture, onClose }) => {
           {(capturedImage || recordedBlob) && (
             <Button
               onClick={confirmCapture}
-              className="bg-green-600 text-white hover:bg-green-700"
+              className="bg-green-600 text-white hover:bg-green-700 hover:cursor-pointer"
             >
               Confirm
             </Button>
@@ -167,7 +167,7 @@ const MediaCapture = ({ type, onCapture, onClose }) => {
 
           <Button
             onClick={onClose}
-            className="bg-gray-500 text-white hover:bg-gray-600"
+            className="bg-gray-500 text-white hover:bg-gray-600 hover:cursor-pointer"
           >
             Cancel
           </Button>
