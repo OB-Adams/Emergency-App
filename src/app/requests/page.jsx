@@ -37,7 +37,7 @@ export default function Requests() {
       }
     };
 
-    if (session?.user?.email) {
+    if (session?.user?.name) { // Changed to user.name to align with userName filtering
       fetchUserRequests();
     } else {
       setLoading(false);
@@ -69,6 +69,7 @@ export default function Requests() {
               >
                 <h2 className="text-lg font-semibold text-red-600">{request.emergencyType}</h2>
                 <p className="text-gray-700 mt-2">{request.description || 'No description provided.'}</p>
+                <p className="text-gray-700 mt-2">{request.location || 'No location provided.'}</p>
                 <p className="text-sm text-gray-400 mt-2">
                   {new Date(request.createdAt).toLocaleString()}
                 </p>
