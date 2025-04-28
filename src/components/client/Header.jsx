@@ -24,6 +24,9 @@ export default function Header() {
       case '/profile':
         setActiveButton('profile');
         break;
+      case '/requests':
+        setActiveButton('requests');
+        break;
       default:
         setActiveButton(null);
     }
@@ -83,6 +86,24 @@ export default function Header() {
               className={`w-5 h-5 hover:cursor-pointer mr-2 ${activeButton === 'sos' ? 'brightness-0 invert' : ''}`}
             />
             SOS
+          </Button>
+        </Link>
+        <Link href="/requests" className="flex-1">
+          <Button
+            variant="ghost"
+            onClick={() => handleButtonClick('requests')}
+            className={`w-full flex items-center justify-center hover:cursor-pointer rounded-lg px-4 py-2 tracking-widest ${
+              activeButton === 'requests'
+                ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
+                : 'text-gray-700 hover:bg-red-100'
+            }`}
+          >
+            <img
+              src="/icons/requests.svg"
+              alt="Requests"
+              className={`w-5 h-5 hover:cursor-pointer mr-2 ${activeButton === 'requests' ? 'brightness-0 invert' : ''}`}
+            />
+            Requests
           </Button>
         </Link>
         <Link href="/about" className="flex-1">
