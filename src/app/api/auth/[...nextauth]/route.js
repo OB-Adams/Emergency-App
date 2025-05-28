@@ -4,7 +4,7 @@ import { compare, hash } from "bcryptjs";
 import { SignupFormSchema, LoginSchema } from "../../../lib/definitions";
 import { connectDB } from "../../../lib/utils/db";
 
-export const authOptions = {
+const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
